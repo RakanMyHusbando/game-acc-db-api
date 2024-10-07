@@ -1,4 +1,4 @@
-### POST: 'user_league_of_legends' (add new leag acc)
+### POST: 'user_league_of_legends' (add new league acc)
 ```bash
 http://host:port/user/league_of_legends
 ```
