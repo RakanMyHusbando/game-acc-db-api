@@ -123,7 +123,6 @@ class UserModel:
         finally:
             return result
     
-    # main_acc=-1 -> no import
     def create_league(self,user_name:str,ingame_name:str,region:str,position:list[dict[str,list[str]]],discord_id=-1) -> str:
         query = 'INSERT INTO user_league_of_legends (user_key, name, region'
         values = f'{self.search_or_create_user(user_name,discord_id)}, "{ingame_name}", "{region}"'
