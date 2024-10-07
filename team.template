@@ -1,0 +1,41 @@
+{
+    "config": {
+        "team_name": "",
+        "short_name": "",
+        "roles": {
+            "team_role_id": 0,
+            "player_role_id": 0,
+            "coach_role_id": 0,
+            "tryout_role_id": 0
+        },
+        "category": {
+            "category_id": 0,
+            "channels": {
+                "team_roaster": 0,
+                "team_chat": 0,
+                "shogun_chat": 0,
+                "team_voice": 0
+            }
+        }
+    },
+    "member": {
+        "leader": 0,
+        "coleader": 0,
+        "main": {
+            "top": 0,
+            "jgl": 0,
+            "mid": 0,
+            "adc": 0,
+            "sup": 0
+        },
+        "sub": [
+            0
+        ],
+        "coach": [
+            0
+        ],
+        "manager": [
+            0
+        ]
+    }
+}

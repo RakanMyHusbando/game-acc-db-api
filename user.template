@@ -1,0 +1,20 @@
+{
+    "server": {
+    },
+    "games": {
+        "league_of_legends": {
+            "summoner_name": "",
+            "region": "",
+            "position": "",
+            "secondary_position": "",
+            "preferred_champions": [""]
+        },
+        "valorant": {
+            "username": "",
+            "region": "",
+            "position": "",
+            "secondary_position": "",
+            "preferred_agents": [""]
+        }
+    }
+}

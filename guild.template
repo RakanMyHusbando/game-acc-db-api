@@ -1,0 +1,34 @@
+{
+    "name": "",
+    "description": "",
+    "staff": {
+        "owner": "",
+        "coowner": "",
+        "managers": [
+        ],
+        "moderators": [
+        ],
+        "helpers": [
+        ]
+    },
+    "games": {
+        "league_of_legends": {
+            "teams": [
+            ],
+            "events": {
+            }
+        },
+        "valorant": {
+            "teams": [
+            ],
+            "events": {
+            }
+        },
+        "rocket_league": {
+            "teams": [
+            ],
+            "events": {
+            }
+        }
+    }
+}
