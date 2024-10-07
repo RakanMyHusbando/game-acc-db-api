@@ -14,7 +14,6 @@ class Schema:
     
     def create_table(self):
         querys = [
-            # user_league.main_acc, user_valorant.main_acc ( 1 = true / 0 = false )
             """
                 CREATE TABLE IF NOT EXISTS user_league_of_legends (
                     user_key INTEGER NOT NULL,
@@ -114,42 +113,67 @@ class UserModel:
             if type(result) != int:
                 raise Exception()
         except:
+            query = f'INSERT INTO user (name) VALUES ("{user_name}")'
             if discord_id != -1:
-                self.conn.execute(f'INSERT INTO user (name, discord_id) VALUES ("{user_name}", "{discord_id}")')
-            else:
-                self.conn.execute(f'INSERT INTO user (name) VALUES ("{user_name}")')
+                query = f'INSERT INTO user (name, discord_id) VALUES ("{user_name}", "{discord_id}")'
+            self.conn.execute(query)
             self.conn.commit()
             result = search()
         finally:
             return result
-    
-    def create_league(self,user_name:str,ingame_name:str,region:str,position:list[dict[str,list[str]]],discord_id=-1) -> str:
+        
+    # positiom = [ { position: str, champs:[str,str,str] }, ... ] -> max length 2
+    def create_user_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list[dict[str,list[str]]],discord_id=-1) -> str:
         query = 'INSERT INTO user_league_of_legends (user_key, name, region'
         values = f'{self.search_or_create_user(user_name,discord_id)}, "{ingame_name}", "{region}"'
-
+        print(position)
         if len(position) > 0:
             query += ", "
             values += ", "
         for i in range(len(position)):
             query += f'position{i},'
-            values += f'"{position[i].position}", '
-            for j in range(len(position[i].champs)):
+            values += f'"{position[i]["position"]}", '
+            for j in range(len(position[i]["champs"])):
                 query += f'position{i}_champion{j}'
-                values += f'"{position[i].champs[j]}"'
-                if i < range(len(position))-1 and j < len(position[i].champs)-1:
+                values += f'"{position[i]["champs"][j]}"'
+                if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
                     query += ', '
                     values += ', '
         query += f') VALUES ({values})'
-        
+
         result = self.conn.execute(query)
         self.conn.commit()
 
         return f'Ok {result.lastrowid}'
     
-Schema()
-
-user = UserModel()
-print(user.create_league("testUsername","testName#EUW","euw",[]))
-
-# if main_acc == 0 or main_acc == 1:
-#             if self.conn.execute()
+    def get_user_league_of_legends(self,user_name:str) -> list|None:
+        cur = self.conn.cursor()
+        def create_acc_list(accs):
+            result = []
+            for acc in accs:
+                posititon = []
+                pos = { "position": None, "champs": []}
+                for i in range(len(acc)):
+                    if i == 0:
+                        pos = { "position": None, "champs": []}
+                    if i == len(acc)-1 and pos["position"] != None:
+                        posititon.append(pos)
+                    if acc[i] != None:
+                        if i == 3 or i == 7: 
+                            pos["position"] = acc[i]
+                        elif i > 3: 
+                            pos["champs"].append(acc[i])
+                result.append({
+                    "ingame_name": acc[1],
+                    "region": acc[2],
+                    "position": posititon
+                })
+            return result
+        try: 
+            cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
+            cur.execute(f'SELECT * FROM user_league_of_legends WHERE user_key = {cur.fetchall()[0][0]}')
+        except:
+            return None
+        finally:
+            return create_acc_list(cur.fetchall())
+        
