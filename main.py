@@ -11,6 +11,3 @@ def create_user_league():
 if __name__ == "__main__":
     Schema()
     app.run(debug=True)
-
-# sudo pacman -S sqlitebrowser python-flask
-# yay -S postman-bin
