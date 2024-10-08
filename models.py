@@ -103,24 +103,22 @@ class UserModel:
     def search_or_create_user(self,user_name:str,discord_id:str|None) -> int|None:
         cur = self.conn.cursor()
         result = None
-
-        def search():
-            cur.execute(f'SELECT user_key FROM user WHERE name = "{user_name}"')
-            return cur.fetchall()[0][0]
-        
         try:
-            result = search()
+            cur.execute(f'SELECT user_key FROM user WHERE name = "{user_name}"')
+            result = cur.fetchall()[0][0]
             if type(result) != int:
                 raise Exception()
-        except:
-            query = f'INSERT INTO user (name) VALUES ("{user_name}")'
-            if discord_id != None:
-                query = f'INSERT INTO user (name, discord_id) VALUES ("{user_name}", "{discord_id}")'
-            self.conn.execute(query)
-            self.conn.commit()
-            result = search()
+        except Exception as err:
+            print(err) # TODO 
         finally:
             return result
+        
+    def create_user(self,user_name:str,discord_id:str|None) -> str:
+        query = f'INSERT INTO user (name) VALUES ("{user_name}")'
+        if discord_id != None:
+            query = f'INSERT INTO user (name, discord_id) VALUES ("{user_name}", "{discord_id}")'
+        self.conn.execute(query)
+        self.conn.commit()
         
     # positiom = [ { position: str, champs:[str,str,str] }, ... ] -> max length 2
     def create_user_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list,discord_id:str|None) -> str:
@@ -163,15 +161,19 @@ class UserModel:
                             pos["position"] = acc[i]
                         elif i > 3: 
                             pos["champs"].append(acc[i])
-                result.append({
+                this_acc = {
                     "ingame_name": acc[1],
                     "region": acc[2],
                     "position": posititon
-                })
+                }
+                if user_name == None:
+                    cur.execute(f'SELECT * FROM user WHERE user_key = {acc[0]}')
+                    this_acc["userna"] = cur.fetchall()[0][1]
+                result.append(this_acc)
             return result
         try: 
             query = "SELECT * FROM user_league_of_legends "
-            if user_name == None:
+            if user_name != None:
                 cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
                 query += f'WHERE user_key = {cur.fetchall()[0][0]}'
             cur.execute(query)
