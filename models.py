@@ -145,12 +145,11 @@ class UserModel:
                     "discord_id": elem[2]
                 })
             if len(result) == 1:
-                result = {}
+                result = result[0]
             return result
         except:
             return None
         
-    # positiom = [ { position: str, champs:[str,str,str] }, ... ] -> max length 2
     def create_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str:
         # create user if not exists
         if self.key_by_uername(user_name,discord_id) == None:
@@ -158,10 +157,9 @@ class UserModel:
 
         query = 'INSERT INTO user_league_of_legends (user_key, name, region'
         values = f'{self.key_by_uername(user_name,discord_id)}, "{ingame_name}", "{region}"'
-        if position == None:
+        if position != None:
             query += ", "
             values += ", "
-        else:
             for i in range(len(position)):
                 query += f'position{i},'
                 values += f'"{position[i]["position"]}", '
@@ -207,6 +205,43 @@ class UserModel:
                     cur.execute(f'SELECT * FROM user WHERE user_key = {acc[0]}')
                     this_acc["userna"] = cur.fetchall()[0][1]
                 result.append(this_acc)
+            return result
+        except:
+            return None
+        
+    def create_valorant(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str:  
+        # create user if not exists
+        if self.key_by_uername(user_name,discord_id) == None:
+            self.create(user_name,discord_id)
+
+        query = 'INSERT INTO user_valorant (user_key, name, region'
+        values = f'{self.key_by_uername(user_name,discord_id)}, "{ingame_name}", "{region}"'
+        if position != None:
+            query += ", "
+            values += ", "
+            for i in range(len(position)):
+                query += f'position{i},'
+                values += f'"{position[i]["position"]}", '
+                for j in range(len(position[i]["champs"])):
+                    query += f'position{i}_champion{j}'
+                    values += f'"{position[i]["champs"][j]}"'
+                    if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
+                        query += ', '
+                        values += ', '
+        query += f') VALUES ({values})'
+        result = self.conn.execute(query)
+        self.conn.commit()
+        return f'Ok {result.lastrowid}'
+
+    def get_valorant(self,user_name:str|None) -> list|None:  
+        try:
+            cur = self.conn.cursor()
+            result = []
+            query = "SELECT * FROM user_valorant "
+            if user_name != None:
+                cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
+                query += f'WHERE user_key = {cur.fetchall()[0][0]}'
+            cur.execute(query)
             return result
         except:
             return None

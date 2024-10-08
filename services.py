@@ -28,3 +28,15 @@ class UserService:
     
     def get_league_of_legends(self,input:str|None) -> list[dict]:
         return self.model.get_league_of_legends(input)
+    
+    def create_valorant(self,input:dict) -> str:
+        return self.model.create_league_of_legends(
+            try_key(input,"user_name"),
+            try_key(input,"ingame_name"),
+            try_key(input,"region"),
+            None,
+            try_key(input,"discord_id")
+        )
+    
+    def get_valorant(self,input:str|None) -> list[dict]:
+        return self.model.get_league_of_legends(input)
