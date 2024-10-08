@@ -1,7 +1,7 @@
 # user
 
-## add new game acc
-replace `<game>` with:
+## Add new game account
+Replace `<game>` with:
   - league_of_legends
   - valorant
     
