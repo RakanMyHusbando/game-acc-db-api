@@ -5,11 +5,11 @@ from services import UserLeagueOfLegendsService
 
 app = Flask(__name__)
 
-@app.route("/user",methods = ["GET"])
+@app.route("/api/user",methods = ["GET"])
 def create_user_league():
     pass
 
-@app.route("/user/<string:game>",methods = ["POST"])
+@app.route("/api/user/<string:game>",methods = ["POST"])
 def create_user_game(game):
     if game == "league_of_legends":
         print(request.get_json())
@@ -17,9 +17,10 @@ def create_user_game(game):
     elif game == "valorant":
         pass
 
-@app.route("/user/league_of_legends/<string:username>",methods = ["GET"])
-def get_user_league_of_legends(username):
-    return jsonify(UserLeagueOfLegendsService().get(username))
+@app.route("/api/user/<string:game>/<string:username>",methods = ["GET"])
+def get_user_game(game,username):
+    if game == "league_of_legends":
+        return jsonify(UserLeagueOfLegendsService().get(username))
 
 if __name__ == "__main__":
     Schema()
