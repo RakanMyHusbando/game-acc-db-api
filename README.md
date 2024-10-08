@@ -1,4 +1,7 @@
 # user
+Replace `<game>` with:
+  - league_of_legends
+  - valorant
 ## POST new user
 ```
 http://172.0.0.1:5000/api/user
@@ -11,9 +14,6 @@ http://172.0.0.1:5000/api/user
 }
 ```
 ## POST new game account
-Replace `<game>` with:
-  - league_of_legends
-  - valorant
 ```
 http://172.0.0.1:5000/api/user?game=<game>
 ```
@@ -45,4 +45,13 @@ http://172.0.0.1:5000/api/user?game=<game>
   "ingame_name": string,
   "region": string,
 }
+```
+## GET game accounts
+```
+http://172.0.0.1:5000/api/<game>
+```
+## GET game account by username
+- replace `<user_name>`
+```
+http://172.0.0.1:5000/api/<game>?username=<user_name>
 ```
