@@ -1,7 +1,5 @@
----
-Replace `<game>` with:
-  - league_of_legends
-  - valorant
+
+Replace `<game>` with: league_of_legends. valorant
 ---
 ## POST new user
 ```
