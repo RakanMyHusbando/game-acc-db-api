@@ -1,7 +1,7 @@
 # user
 ## POST new user
 ```
-http://172.0.0.1:5000/user
+http://172.0.0.1:5000/api/user
 ```
 ### Header-data format:
 ```
@@ -15,7 +15,7 @@ Replace `<game>` with:
   - league_of_legends
   - valorant
 ```
-http://172.0.0.1:5000/user?game=<game>
+http://172.0.0.1:5000/api/user?game=<game>
 ```
 ### `league_of_legemds` header-data format:
 ```
