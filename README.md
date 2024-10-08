@@ -15,6 +15,9 @@ http://172.0.0.1:5000/api/user
 http://172.0.0.1:5000/api/user?game=<game>
 ```
 ### `league_of_legemds` header data:
+- if no user with this `user_name` exists, it will be created
+- `position` max length is 2
+- `position[i].champs` max length is 3
 ```
 {
   "user_name": string,
@@ -31,9 +34,6 @@ http://172.0.0.1:5000/api/user?game=<game>
   ]
 }
 ```
-- if no user with this `user_name` exists, it will be created
-- `position` max length is 2
-- `position[i].champs` max length is 3
 ### `valorant` header data:
 ```
 {
