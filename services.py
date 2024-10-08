@@ -4,10 +4,10 @@ class UserLeagueOfLegendsService:
     def __init__(self) -> None:
         self.model = UserModel()
 
-    def create(self,data:dict) -> str:
+    def create(self,arg:dict) -> str:
         def try_key(key):
             try:
-                result = data[key]
+                result = arg[key]
                 return result
             except Exception as err:
                 print(err)
@@ -26,5 +26,8 @@ class UserLeagueOfLegendsService:
 
         return self.model.create_user_league_of_legends(user_name,ingame_name,region,position,discord_id)
     
-    def get(self,user_name:str) -> list[dict]:
-        return self.model.get_user_league_of_legends(user_name)
+    def get(self,arg:str) -> list[dict]:
+        name = arg
+        if arg == "*":
+            name = None
+        return self.model.get_user_league_of_legends(name)

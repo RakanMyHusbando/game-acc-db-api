@@ -100,7 +100,7 @@ class UserModel:
     def __init__(self,db_file=db_file) -> None:
         self.conn = sqlite3.connect(db_file)
     
-    def search_or_create_user(self,user_name:str,discord_id:int) -> int|None:
+    def search_or_create_user(self,user_name:str,discord_id:str|None) -> int|None:
         cur = self.conn.cursor()
         result = None
 
@@ -114,7 +114,7 @@ class UserModel:
                 raise Exception()
         except:
             query = f'INSERT INTO user (name) VALUES ("{user_name}")'
-            if discord_id != -1:
+            if discord_id != None:
                 query = f'INSERT INTO user (name, discord_id) VALUES ("{user_name}", "{discord_id}")'
             self.conn.execute(query)
             self.conn.commit()
@@ -123,7 +123,7 @@ class UserModel:
             return result
         
     # positiom = [ { position: str, champs:[str,str,str] }, ... ] -> max length 2
-    def create_user_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list[dict[str,list[str]]],discord_id=-1) -> str:
+    def create_user_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list,discord_id:str|None) -> str:
         query = 'INSERT INTO user_league_of_legends (user_key, name, region'
         values = f'{self.search_or_create_user(user_name,discord_id)}, "{ingame_name}", "{region}"'
         print(position)
@@ -146,7 +146,7 @@ class UserModel:
 
         return f'Ok {result.lastrowid}'
     
-    def get_user_league_of_legends(self,user_name:str) -> list|None:
+    def get_user_league_of_legends(self,user_name:str|None) -> list|None:
         cur = self.conn.cursor()
         def create_acc_list(accs):
             result = []
@@ -170,8 +170,11 @@ class UserModel:
                 })
             return result
         try: 
-            cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
-            cur.execute(f'SELECT * FROM user_league_of_legends WHERE user_key = {cur.fetchall()[0][0]}')
+            query = "SELECT * FROM user_league_of_legends "
+            if user_name == None:
+                cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
+                query += f'WHERE user_key = {cur.fetchall()[0][0]}'
+            cur.execute(query)
         except:
             return None
         finally:
