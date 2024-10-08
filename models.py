@@ -17,7 +17,7 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS user_league_of_legends (
                     user_key INTEGER NOT NULL,
-                    name BLOB NOT NULL,
+                    name TEXT NOT NULL,
                     region TEXT NOT NULL,
                     position0 TEXT,
                     position0_champion0 TEXT,
@@ -33,7 +33,7 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS user_valorant (
                     user_key TEXT NOT NULL,
-                    username BLOB NOT NULL,
+                    username TEXT NOT NULL,
                     region TEXT NOT NULL,
                     position0 TEXT,
                     position0_agent0 TEXT,
@@ -49,14 +49,21 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS guild (
                     guild_key INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name BLOB,
+                    name TEXT,
                     description TEXT
                 )
             """,
             """
                 CREATE TABLE IF NOT EXISTS team (
                     team_key INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name BLOB
+                    name TEXT
+                )
+            """,
+            """
+                CREATE TABLE IF NOT EXISTS discord_server (
+                    discord_server_key INTEGER PRIMARY KEY AUTOINCREMENT,
+                    discord_server_id TEXT
+                    name TEXT
                 )
             """,
             """
@@ -70,7 +77,7 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS user (
                     user_key INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name BLOB NOT NULL,
+                    name TEXT NOT NULL,
                     discord_id TEXT
                 )
             """,
@@ -89,6 +96,14 @@ class Schema:
                     FOREIGN KEY (user_key) REFERENCES user (user_key),
                     FOREIGN KEY (guild_key) REFERENCES guild (guild_key) 
                 )
+            """,
+            """
+                CREATE TABLE IF NOT EXISTS user_discord_id (
+                    user_key INTEGER NOT NULL,
+                    discord_server_key NOT NULL
+                    FOREIGN KEY (user_key) REFERENCES user (user_key),
+                    FOREIGN KEY (discord_server_key) REFERENCES discord_server (discord_server_key) 
+                )
             """
         ]
         for query in querys:
@@ -100,55 +115,77 @@ class UserModel:
     def __init__(self,db_file=db_file) -> None:
         self.conn = sqlite3.connect(db_file)
     
-    def search_or_create_user(self,user_name:str,discord_id:str|None) -> int|None:
+    def key_by_uername(self,user_name:str) -> int|None:
         cur = self.conn.cursor()
-        result = None
         try:
             cur.execute(f'SELECT user_key FROM user WHERE name = "{user_name}"')
-            result = cur.fetchall()[0][0]
-            if type(result) != int:
-                raise Exception()
-        except Exception as err:
-            print(err) # TODO 
-        finally:
-            return result
+            return cur.fetchall()[0][0]
+        except:
+            return None 
         
-    def create_user(self,user_name:str,discord_id:str|None) -> str:
+    def create(self,user_name:str,discord_id:str|None) -> str:
         query = f'INSERT INTO user (name) VALUES ("{user_name}")'
         if discord_id != None:
             query = f'INSERT INTO user (name, discord_id) VALUES ("{user_name}", "{discord_id}")'
-        self.conn.execute(query)
-        self.conn.commit()
-        
-    # positiom = [ { position: str, champs:[str,str,str] }, ... ] -> max length 2
-    def create_user_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list,discord_id:str|None) -> str:
-        query = 'INSERT INTO user_league_of_legends (user_key, name, region'
-        values = f'{self.search_or_create_user(user_name,discord_id)}, "{ingame_name}", "{region}"'
-        print(position)
-        if len(position) > 0:
-            query += ", "
-            values += ", "
-        for i in range(len(position)):
-            query += f'position{i},'
-            values += f'"{position[i]["position"]}", '
-            for j in range(len(position[i]["champs"])):
-                query += f'position{i}_champion{j}'
-                values += f'"{position[i]["champs"][j]}"'
-                if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
-                    query += ', '
-                    values += ', '
-        query += f') VALUES ({values})'
-
         result = self.conn.execute(query)
         self.conn.commit()
-
         return f'Ok {result.lastrowid}'
     
-    def get_user_league_of_legends(self,user_name:str|None) -> list|None:
-        cur = self.conn.cursor()
-        def create_acc_list(accs):
+    def get(self,user_name:str|None) -> list|dict|None:
+        try: 
+            cur = self.conn.cursor()
             result = []
-            for acc in accs:
+            if user_name == None:
+                cur.execute(f'SELECT * FROM user WHERE user_key = {user_name}')
+            else:
+                cur.execute('SELECT * FROM user')
+            for elem in cur.fetchall():
+                result.append({
+                    "username": elem[1],
+                    "discord_id": elem[2]
+                })
+            if len(result) == 1:
+                result = {}
+            return result
+        except:
+            return None
+        
+    # positiom = [ { position: str, champs:[str,str,str] }, ... ] -> max length 2
+    def create_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str:
+        # create user if not exists
+        if self.key_by_uername(user_name,discord_id) == None:
+            self.create(user_name,discord_id)
+
+        query = 'INSERT INTO user_league_of_legends (user_key, name, region'
+        values = f'{self.key_by_uername(user_name,discord_id)}, "{ingame_name}", "{region}"'
+        if position == None:
+            query += ", "
+            values += ", "
+        else:
+            for i in range(len(position)):
+                query += f'position{i},'
+                values += f'"{position[i]["position"]}", '
+                for j in range(len(position[i]["champs"])):
+                    query += f'position{i}_champion{j}'
+                    values += f'"{position[i]["champs"][j]}"'
+                    if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
+                        query += ', '
+                        values += ', '
+        query += f') VALUES ({values})'
+        result = self.conn.execute(query)
+        self.conn.commit()
+        return f'Ok {result.lastrowid}'
+    
+    def get_league_of_legends(self,user_name:str|None) -> list|None:  
+        try:
+            cur = self.conn.cursor()
+            result = []
+            query = "SELECT * FROM user_league_of_legends "
+            if user_name != None:
+                cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
+                query += f'WHERE user_key = {cur.fetchall()[0][0]}'
+            cur.execute(query)
+            for acc in cur.fetchall():
                 posititon = []
                 pos = { "position": None, "champs": []}
                 for i in range(len(acc)):
@@ -171,14 +208,5 @@ class UserModel:
                     this_acc["userna"] = cur.fetchall()[0][1]
                 result.append(this_acc)
             return result
-        try: 
-            query = "SELECT * FROM user_league_of_legends "
-            if user_name != None:
-                cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
-                query += f'WHERE user_key = {cur.fetchall()[0][0]}'
-            cur.execute(query)
         except:
             return None
-        finally:
-            return create_acc_list(cur.fetchall())
-        

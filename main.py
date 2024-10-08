@@ -1,4 +1,3 @@
-import json
 from flask import Flask, request, jsonify
 from models import Schema
 from services import UserService
@@ -9,10 +8,9 @@ app = Flask(__name__)
 def create_user():
     game = request.args.get("game")
     if not game:
-        pass
+        return UserService().create(request.get_json()), 201
     elif game == "league_of_legends":
-        print(request.get_json())
-        return UserService().create_league_of_legends(request.get_json())   
+        return UserService().create_league_of_legends(request.get_json()), 201
     elif game == "valorant":
         pass
 
