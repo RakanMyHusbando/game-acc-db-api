@@ -11,13 +11,13 @@ Header-data format:
 }
 ```
 ## POST new game account
-Replace `<game>` with:
+### Replace `<game>` with:
   - league_of_legends
   - valorant
 ```
 http://172.0.0.1:5000/user?game=<game>
 ```
-Header-data format:
+### Header-data format:
 ```
 {
   "user_name": string,
