@@ -1,7 +1,7 @@
 ## user
 
-#### add new league acc
+#### add new game acc
 
 ```
-http://host:port/user/league_of_legends
+http://host:port/user?game=<game>
 ```
