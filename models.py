@@ -1,4 +1,5 @@
 import sqlite3
+from utils import key_by_uername
 
 db_file = "data.db"
 
@@ -56,23 +57,26 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS team (
                     team_key INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT
+                    name TEXT NOT NULL,
+                    game TEXT NOT NULL,
+                    guild_key TEXT, 
+                    FOREIGN KEY (guild_key) REFERENCES guild (guild_key)
                 )
             """,
             """
-                CREATE TABLE IF NOT EXISTS discord_server (
-                    discord_server_key INTEGER PRIMARY KEY AUTOINCREMENT,
-                    discord_server_id TEXT
-                    name TEXT
-                )
-            """,
-            """
-                CREATE TABLE IF NOT EXISTS team_guild (
+                CREATE TABLE IF NOT EXISTS team_discord (
                     team_key INTEGER NOT NULL,
-                    guild_key INTEGER NOT NULL,
-                    FOREIGN KEY (team_key) REFERENCES team (team_key),
-                    FOREIGN KEY (guild_key) REFERENCES guild (guild_key) 
-                )        
+                    role_team_id TEXT,
+                    role_player_id TEXT,
+                    role_team_id TEXT,
+                    role_coach_id TEXT,
+                    category_id TEXT,
+                    channel_team_roaster TEXT,
+                    channel_team_chat TEXT,
+                    channel_shogun_chat TEXT,
+                    channel_team_voice TEXT,
+                    FOREIGN KEY (team_key) REFERENCES team (team_key)
+                )
             """,
             """
                 CREATE TABLE IF NOT EXISTS user (
@@ -85,6 +89,7 @@ class Schema:
                 CREATE TABLE IF NOT EXISTS user_team (
                     user_key INTEGER NOT NULL,
                     team_key INTEGER NOT NULL,
+                    role TEXT,
                     FOREIGN KEY (user_key) REFERENCES user (user_key),
                     FOREIGN KEY (team_key) REFERENCES team (team_key) 
                 )
@@ -93,16 +98,9 @@ class Schema:
                 CREATE TABLE IF NOT EXISTS user_guild (
                     user_key INTEGER NOT NULL,
                     guild_key INTEGER NOT NULL,
+                    role TEXT,
                     FOREIGN KEY (user_key) REFERENCES user (user_key),
                     FOREIGN KEY (guild_key) REFERENCES guild (guild_key) 
-                )
-            """,
-            """
-                CREATE TABLE IF NOT EXISTS user_discord_id (
-                    user_key INTEGER NOT NULL,
-                    discord_server_key NOT NULL
-                    FOREIGN KEY (user_key) REFERENCES user (user_key),
-                    FOREIGN KEY (discord_server_key) REFERENCES discord_server (discord_server_key) 
                 )
             """
         ]
@@ -114,14 +112,6 @@ class Schema:
 class UserModel:
     def __init__(self,db_file=db_file) -> None:
         self.conn = sqlite3.connect(db_file)
-    
-    def key_by_uername(self,user_name:str) -> int|None:
-        cur = self.conn.cursor()
-        try:
-            cur.execute(f'SELECT user_key FROM user WHERE name = "{user_name}"')
-            return cur.fetchall()[0][0]
-        except:
-            return None 
         
     def create(self,user_name:str,discord_id:str|None) -> str:
         query = f'INSERT INTO user (name) VALUES ("{user_name}")'
@@ -152,11 +142,11 @@ class UserModel:
         
     def create_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str:
         # create user if not exists
-        if self.key_by_uername(user_name,discord_id) == None:
+        if key_by_uername(self.conn,user_name) == None:
             self.create(user_name,discord_id)
 
         query = 'INSERT INTO user_league_of_legends (user_key, name, region'
-        values = f'{self.key_by_uername(user_name,discord_id)}, "{ingame_name}", "{region}"'
+        values = f'{key_by_uername(self.conn,user_name)}, "{ingame_name}", "{region}"'
         if position != None:
             query += ", "
             values += ", "
@@ -211,11 +201,11 @@ class UserModel:
         
     def create_valorant(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str:  
         # create user if not exists
-        if self.key_by_uername(user_name,discord_id) == None:
-            self.create(user_name,discord_id)
+        if key_by_uername(self.conn,user_name) == None:
+            self.create(user_name)
 
         query = 'INSERT INTO user_valorant (user_key, name, region'
-        values = f'{self.key_by_uername(user_name,discord_id)}, "{ingame_name}", "{region}"'
+        values = f'{key_by_uername(self.conn,user_name)}, "{ingame_name}", "{region}"'
         if position != None:
             query += ", "
             values += ", "
@@ -245,3 +235,13 @@ class UserModel:
             return result
         except:
             return None
+        
+class TeamModel:
+    def __init__(self,db_file=db_file) -> None:
+        self.conn = sqlite3.connect(db_file)
+    
+    def creat(self,name:str,member:list[int]) -> None:
+        pass
+
+    def get(self,name:str,member:list[int]) -> None:
+        pass
