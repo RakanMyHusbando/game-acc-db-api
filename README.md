@@ -1,7 +1,7 @@
-## user
+# user
 
-#### add new game acc
-Game:
+## add new game acc
+### Game:
   - league_of_legends
   - valorant
 ```
