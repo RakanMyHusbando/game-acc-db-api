@@ -3,7 +3,7 @@
 http://host:port/user/league_of_legends
 ```
 ### GET: all accounts for a game (by username) 
-#### Games:
+Games:
     - league_of_legends
     - valorant
 ```bash
