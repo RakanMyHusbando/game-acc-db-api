@@ -1,3 +1,4 @@
+---
 Replace `<game>` with:
   - league_of_legends
   - valorant
