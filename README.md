@@ -1,4 +1,4 @@
-# WARNING: This project is in progress!
+# WARNING: This project is in progress and some parts dont work yet!
 # Description
 Run `python main.py` inside the porject-folder.
 # API requests
