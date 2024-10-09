@@ -1,8 +1,8 @@
-from models import UserModel
+from models import UserModel, TeamModel
 from utils import UtilsServices
 
 class UserService:
-    def __init__(self) -> None:
+    def __init__(self,input) -> None:
         self.model = UserModel()
         self.utils = UtilsServices()
 
@@ -24,7 +24,7 @@ class UserService:
             self.utils.try_key(input,"discord_id")
         )
     
-    def get_league_of_legends(self,input:str|None) -> list[dict]:
+    def get_league_of_legends(self,input:str|None) -> list:
         return self.model.get_league_of_legends(input)
     
     def create_valorant(self,input:dict) -> str:
@@ -36,5 +36,22 @@ class UserService:
             self.utils.try_key(input,"discord_id")
         )
     
-    def get_valorant(self,input:str|None) -> list[dict]:
+    def get_valorant(self,input:str|None) -> list:
         return self.model.get_league_of_legends(input)
+    
+class TeamService:
+    def __init__(self,input) -> None:
+        self.model = TeamModel()
+        self.utils = UtilsServices()
+
+    def create(self,input) -> str:
+        pass
+    
+    def get(self,input) -> list:
+        pass
+
+    def create_user(self,input) -> str:
+        pass
+    
+    def get_user(self,input) -> list:
+        pass
