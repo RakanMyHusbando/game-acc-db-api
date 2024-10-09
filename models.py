@@ -1,5 +1,5 @@
 import sqlite3
-from utils import key_by_uername
+from utils import UtilsModels
 
 db_file = "data.db"
 
@@ -68,7 +68,7 @@ class Schema:
                     team_key INTEGER NOT NULL,
                     role_team_id TEXT,
                     role_player_id TEXT,
-                    role_team_id TEXT,
+                    role_tryout_id TEXT,
                     role_coach_id TEXT,
                     category_id TEXT,
                     channel_team_roaster TEXT,
@@ -112,6 +112,7 @@ class Schema:
 class UserModel:
     def __init__(self,db_file=db_file) -> None:
         self.conn = sqlite3.connect(db_file)
+        self.utis = UtilsModels()
         
     def create(self,user_name:str,discord_id:str|None) -> str:
         query = f'INSERT INTO user (name) VALUES ("{user_name}")'
@@ -121,32 +122,30 @@ class UserModel:
         self.conn.commit()
         return f'Ok {result.lastrowid}'
     
-    def get(self,user_name:str|None) -> list|dict|None:
+    def get(self,user_name:str|None) -> list|None:
         try: 
             cur = self.conn.cursor()
+            query = "SELECT * FROM user "
+            if user_name != None:
+                query += f'WHERE name = "{user_name}"'
+            cur.execute(query)
             result = []
-            if user_name == None:
-                cur.execute(f'SELECT * FROM user WHERE user_key = {user_name}')
-            else:
-                cur.execute('SELECT * FROM user')
             for elem in cur.fetchall():
                 result.append({
                     "username": elem[1],
                     "discord_id": elem[2]
                 })
-            if len(result) == 1:
-                result = result[0]
             return result
         except:
             return None
         
     def create_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str:
         # create user if not exists
-        if key_by_uername(self.conn,user_name) == None:
+        if self.utis.key_by_uername(self.conn,user_name) == None:
             self.create(user_name,discord_id)
 
         query = 'INSERT INTO user_league_of_legends (user_key, name, region'
-        values = f'{key_by_uername(self.conn,user_name)}, "{ingame_name}", "{region}"'
+        values = f'{self.utis.key_by_uername(self.conn,user_name)}, "{ingame_name}", "{region}"'
         if position != None:
             query += ", "
             values += ", "
@@ -201,11 +200,11 @@ class UserModel:
         
     def create_valorant(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str:  
         # create user if not exists
-        if key_by_uername(self.conn,user_name) == None:
+        if self.utis.key_by_uername(self.conn,user_name) == None:
             self.create(user_name)
 
         query = 'INSERT INTO user_valorant (user_key, name, region'
-        values = f'{key_by_uername(self.conn,user_name)}, "{ingame_name}", "{region}"'
+        values = f'{self.utis.key_by_uername(self.conn,user_name)}, "{ingame_name}", "{region}"'
         if position != None:
             query += ", "
             values += ", "
@@ -239,6 +238,7 @@ class UserModel:
 class TeamModel:
     def __init__(self,db_file=db_file) -> None:
         self.conn = sqlite3.connect(db_file)
+        self.utils = UtilsModels()
     
     def creat(self,name:str,member:list[int]) -> None:
         pass

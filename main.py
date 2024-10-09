@@ -1,7 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from models import Schema
 from services import UserService
+from utils import UtilsMain
 
+utils = UtilsMain()
 app = Flask(__name__)
 
 @app.route("/api/user",methods = ["POST"])
@@ -16,16 +18,20 @@ def create():
 
 @app.route("/api/user",methods = ["GET"])
 def get():
-    return jsonify(UserService().get(request.args.get("username")))
-
+    username = request.args.get("username")
+    result = UserService().get(username)
+    return utils.res_get(result)
 
 @app.route("/api/<string:game>",methods = ["GET"])
 def get_game_user(game:str):
     username = request.args.get("username")
+    result = None
     if game == "league_of_legends":
-        return jsonify(UserService().get_league_of_legends(username)), 200
+        result = UserService().get_league_of_legends(username)
     elif game == "valorant":
-        return jsonify(UserService().get_valorant(username)), 200
+        result =  UserService().get_valorant(username)
+    return utils.res_get(result)
+
 
 if __name__ == "__main__":
     Schema()

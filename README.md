@@ -1,9 +1,20 @@
+
+<h1 style="width:100%; display:flex; text-align:center">!!! Warning !!!</h1>
+<p style="width:100%; display:flex; text-align:center">
+This project is still very much a work in progress. Furthermore, it does not yet have any error handling and does not check any regx.
+</p>
+# Description
+Go to the project folder in the terminal and run:
+``` bash
+python main.py
+```
+# API requests
 Replace `<game>` with league_of_legends or valorant.
 ## POST new user
 ```
 http://172.0.0.1:5000/api/user
 ```
-### header data:
+### req-body:
 ```
 {
   "user_name": string,
@@ -14,7 +25,7 @@ http://172.0.0.1:5000/api/user
 ```
 http://172.0.0.1:5000/api/user?game=<game>
 ```
-### `league_of_legemds` header data:
+### `league_of_legemds` req-body:
 - if no user with this `user_name` exists, it will be created
 - `position` max length is 2
 - `position[i].champs` max length is 3
@@ -34,7 +45,7 @@ http://172.0.0.1:5000/api/user?game=<game>
   ]
 }
 ```
-### `valorant` header data:
+### `valorant` req-body:
 ```
 {
   "user_name": string,
