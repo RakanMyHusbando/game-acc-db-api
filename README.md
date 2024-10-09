@@ -1,6 +1,5 @@
 
-# Warning !!!
-This project is still very much a work in progress. Furthermore, it does not yet have any error handling and does not check any regx.
+# Warning!!! This project is in progress.
 ---
 # Description
 Run `python main.py` inside the porject-folder.
