@@ -1,7 +1,4 @@
-
-# Warning !!!
-This project is still very much a work in progress. Furthermore, it does not yet have any error handling and does not check any regx.
----
+# WARNING: This project is in progress and some parts dont work yet!
 # Description
 Run `python main.py` inside the porject-folder.
 # API requests
@@ -10,7 +7,7 @@ Replace `<game>` with league_of_legends or valorant.
 ```
 http://172.0.0.1:5000/api/user
 ```
-### req-body:
+### req-body
 ```
 {
   "user_name": string,
@@ -41,7 +38,7 @@ http://172.0.0.1:5000/api/user?game=<game>
   ]
 }
 ```
-### `valorant` req-body:
+### `valorant` req-body
 ```
 {
   "user_name": string,
@@ -59,3 +56,4 @@ http://172.0.0.1:5000/api/<game>
 ```
 http://172.0.0.1:5000/api/<game>?username=<user_name>
 ```
+
