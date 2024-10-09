@@ -10,7 +10,7 @@ Replace `<game>` with league_of_legends or valorant.
 ```
 http://172.0.0.1:5000/api/user
 ```
-### req-body:
+### req-body
 ```
 {
   "user_name": string,
@@ -41,7 +41,7 @@ http://172.0.0.1:5000/api/user?game=<game>
   ]
 }
 ```
-### `valorant` req-body:
+### `valorant` req-body
 ```
 {
   "user_name": string,
