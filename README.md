@@ -3,10 +3,7 @@
 This project is still very much a work in progress. Furthermore, it does not yet have any error handling and does not check any regx.
 ---
 # Description
-Go to the project folder in the terminal and run:
-``` bash
-python main.py
-```
+Run `python main.py` inside the porject-folder.
 # API requests
 Replace `<game>` with league_of_legends or valorant.
 ## POST new user
