@@ -5,7 +5,7 @@ Run `python main.py` inside the porject-folder.
 Replace `<game>` with league_of_legends or valorant.
 ## POST new user
 ```
-http://172.0.0.1:5000/api/user
+http://127.0.0.1:5000/api/user
 ```
 ### req-body
 ```
@@ -16,7 +16,7 @@ http://172.0.0.1:5000/api/user
 ```
 ## POST new game account
 ```
-http://172.0.0.1:5000/api/user?game=<game>
+http://127.0.0.1:5000/api/user?game=<game>
 ```
 ### `league_of_legemds` req-body:
 - if no user with this `user_name` exists, it will be created
@@ -49,24 +49,24 @@ http://172.0.0.1:5000/api/user?game=<game>
 ```
 ## GET all user
 ```
-http://172.0.0.1:5000/api/user
+http://127.0.0.1:5000/api/user
 ```
 ## GET user by username
 - replace `<user_name>`
 ```
-http://172.0.0.1:5000/api/user?username=<user_name>
+http://127.0.0.1:5000/api/user?username=<user_name>
 ```
 ## GET user by discord_id
 - replace `<discord_id>`
 ```
-http://172.0.0.1:5000/api/user?discord_id=<discord_id>
+http://127.0.0.1:5000/api/user?discord_id=<discord_id>
 ```
 ## GET game accounts
 ```
-http://172.0.0.1:5000/api/<game>
+http://127.0.0.1:5000/api/<game>
 ```
 ## GET game account by username
 - replace `<user_name>`
 ```
-http://172.0.0.1:5000/api/<game>?username=<user_name>
+http://127.0.0.1:5000/api/<game>?username=<user_name>
 ```
