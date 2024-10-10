@@ -13,6 +13,7 @@ class UserServices:
         )
 
     def get(self,*input):
+        print(input)
         return self.model.get(
             input[0],
             input[1]
