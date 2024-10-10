@@ -24,10 +24,10 @@ def get():
     value = None
     if username:
         key = "name"
-        key = username
+        value = username
     elif discord_id:
         key = "discord_id"
-        key = discord_id
+        value = discord_id
     result = UserServices().get(key,value)
     return utils.res_get(result)
 

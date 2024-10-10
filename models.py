@@ -126,8 +126,9 @@ class UserModel:
         try: 
             cur = self.conn.cursor()
             query = "SELECT * FROM user "
-            if search_by != None and value != None:
+            if search_by and value:
                 query += f'WHERE {search_by} = "{value}"'
+            print(query)
             cur.execute(query)
             result = []
             for elem in cur.fetchall():
