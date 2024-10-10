@@ -1,6 +1,6 @@
 from flask import Flask, request
 from models import Schema
-from services import UserService
+from services import UserServices
 from utils import UtilsMain
 
 utils = UtilsMain()
@@ -10,16 +10,25 @@ app = Flask(__name__)
 def create():
     game = request.args.get("game")
     if not game:
-        return UserService().create(request.get_json()), 201
+        return UserServices().create(request.get_json()), 201
     elif game == "league_of_legends":
-        return UserService().create_league_of_legends(request.get_json()), 201
+        return UserServices().create_league_of_legends(), 201
     elif game == "valorant":
-        return UserService().create_valorant(request.get_json()), 201
+        return UserServices().create_valorant(request.get_json()), 201
 
 @app.route("/api/user",methods = ["GET"])
 def get():
     username = request.args.get("username")
-    result = UserService().get(username)
+    discord_id = request.args.get("discord_id")
+    key = None
+    value = None
+    if username:
+        key = "name"
+        key = username
+    elif discord_id:
+        key = "discord_id"
+        key = discord_id
+    result = UserServices().get(key,value)
     return utils.res_get(result)
 
 @app.route("/api/<string:game>",methods = ["GET"])
@@ -27,9 +36,9 @@ def get_game_user(game:str):
     username = request.args.get("username")
     result = None
     if game == "league_of_legends":
-        result = UserService().get_league_of_legends(username)
+        result = UserServices().get_league_of_legends(username)
     elif game == "valorant":
-        result =  UserService().get_valorant(username)
+        result =  UserServices().get_valorant(username)
     return utils.res_get(result)
 
 

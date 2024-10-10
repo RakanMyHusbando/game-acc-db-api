@@ -12,10 +12,13 @@ class UtilsServices:
             return None
     
 class UtilsModels: 
-    def key_by_uername(self,conn:Connection,user_name:str) -> int|None:
-        cur = conn.cursor()
+    def __init__(self,conn:Connection) -> None:
+        self.conn = conn
+
+    def key_by_name(self,name:str,table:str):
         try:
-            cur.execute(f'SELECT user_key FROM user WHERE name = "{user_name}"')
+            cur = self.conn.cursor()
+            cur.execute(f'SELECT {table}_key FROM {table} WHERE name = "{name}"')
             return cur.fetchall()[0][0]
         except:
             return None 
