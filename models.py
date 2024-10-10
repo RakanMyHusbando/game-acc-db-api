@@ -122,12 +122,12 @@ class UserModel:
         self.conn.commit()
         return f'ok {result.lastrowid}'
     
-    def get(self,user_name:str|None) -> list|None:
+    def get(self,search_by:str|None,value:str|None) -> list|None:
         try: 
             cur = self.conn.cursor()
             query = "SELECT * FROM user "
-            if user_name:
-                query += f'WHERE name = "{user_name}"'
+            if search_by != None and value != None:
+                query += f'WHERE {search_by} = "{value}"'
             cur.execute(query)
             result = []
             for elem in cur.fetchall():
@@ -143,25 +143,27 @@ class UserModel:
         # create user if not exists
         if self.utils.key_by_name(user_name,"user") == None:
             self.create(user_name,discord_id)
-
-        query = 'INSERT INTO user_league_of_legends (user_key, name, region'
-        values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
-        if position:
-            query += ", "
-            values += ", "
-            for i in range(len(position)):
-                query += f'position{i},'
-                values += f'"{position[i]["position"]}", '
-                for j in range(len(position[i]["champs"])):
-                    query += f'position{i}_champion{j}'
-                    values += f'"{position[i]["champs"][j]}"'
-                    if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
-                        query += ', '
-                        values += ', '
-        query += f') VALUES ({values})'
-        result = self.conn.execute(query)
-        self.conn.commit()
-        return f'ok {result.lastrowid}'
+        try:
+            query = 'INSERT INTO user_league_of_legends (user_key, name, region'
+            values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
+            if position:
+                query += ", "
+                values += ", "
+                for i in range(len(position)):
+                    query += f'position{i},'
+                    values += f'"{position[i]["position"]}", '
+                    for j in range(len(position[i]["champs"])):
+                        query += f'position{i}_champion{j}'
+                        values += f'"{position[i]["champs"][j]}"'
+                        if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
+                            query += ', '
+                            values += ', '
+            query += f') VALUES ({values})'
+            result = self.conn.execute(query)
+            self.conn.commit()
+            return f'ok {result.lastrowid}'
+        except:
+            return None
     
     def get_league_of_legends(self,user_name:str|None) -> list|None:  
         try:
