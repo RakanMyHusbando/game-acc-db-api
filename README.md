@@ -47,6 +47,20 @@ http://172.0.0.1:5000/api/user?game=<game>
   "region": string,
 }
 ```
+## GET all user
+```
+http://172.0.0.1:5000/api/user
+```
+## GET user by username
+- replace `<user_name>`
+```
+http://172.0.0.1:5000/api/user?username=<user_name>
+```
+## GET user by discord_id
+- replace `<discord_id>`
+```
+http://172.0.0.1:5000/api/user?discord_id=<discord_id>
+```
 ## GET game accounts
 ```
 http://172.0.0.1:5000/api/<game>
@@ -56,4 +70,3 @@ http://172.0.0.1:5000/api/<game>
 ```
 http://172.0.0.1:5000/api/<game>?username=<user_name>
 ```
-
