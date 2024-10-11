@@ -1,9 +1,11 @@
 from flask import Flask, request
 from models import Schema
 from services import UserServices
-from utils import UtilsMain
+import os, dotenv, utils
 
-utils = UtilsMain()
+dotenv.load_dotenv() 
+
+utilsMain = utils.UtilsMain()
 app = Flask(__name__)
 
 @app.route("/api/user",methods = ["POST"])
@@ -29,7 +31,7 @@ def get():
         key = "discord_id"
         value = discord_id
     result = UserServices().get(key,value)
-    return utils.res_get(result)
+    return utilsMain.res_get(result)
 
 @app.route("/api/<string:game>",methods = ["GET"])
 def get_game_user(game:str):
@@ -39,9 +41,9 @@ def get_game_user(game:str):
         result = UserServices().get_league_of_legends(username)
     elif game == "valorant":
         result =  UserServices().get_valorant(username)
-    return utils.res_get(result)
+    return utilsMain.res_get(result)
 
 
 if __name__ == "__main__":
     Schema()
-    app.run(debug=True)
+    app.run(debug=True,port=int(os.getenv("PROT")))

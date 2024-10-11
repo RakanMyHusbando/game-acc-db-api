@@ -1,7 +1,9 @@
-import sqlite3
+import sqlite3, os, dotenv
 from utils import UtilsModels
 
-db_file = "data.db"
+dotenv.load_dotenv() 
+
+db_file = os.getenv("DB_FILE")
 
 class Schema:
     def __init__(self,db_file=db_file) -> None:
@@ -13,7 +15,7 @@ class Schema:
         finally:
             self.create_table()
     
-    def create_table(self):
+    def create_table(self) -> None:
         querys = [
             """
                 CREATE TABLE IF NOT EXISTS user_league_of_legends (
@@ -114,14 +116,17 @@ class UserModel:
         self.conn = sqlite3.connect(db_file)
         self.utils = UtilsModels(self.conn)
         
-    def create(self,user_name:str,discord_id:str|None) -> str:
-        query = f'INSERT INTO user (name) VALUES ("{user_name}")'
-        if discord_id:
-            query = f'INSERT INTO user (name, discord_id) VALUES ("{user_name}", "{discord_id}")'
-        result = self.conn.execute(query)
-        self.conn.commit()
-        return f'ok {result.lastrowid}'
-    
+    def create(self,user_name:str,discord_id:str|None) -> str|None:
+        try: 
+            query = f'INSERT INTO user (name) VALUES ("{user_name}")'
+            if discord_id:
+                query = f'INSERT INTO user (name, discord_id) VALUES ("{user_name}", "{discord_id}")'
+            result = self.conn.execute(query)
+            self.conn.commit()
+            return f'ok {result.lastrowid}'
+        except:
+            return None   
+
     def get(self,search_by:str|None,value:str|None) -> list|None:
         try: 
             cur = self.conn.cursor()
@@ -131,16 +136,16 @@ class UserModel:
             print(query)
             cur.execute(query)
             result = []
-            for elem in cur.fetchall():
+            for team in cur.fetchall():
                 result.append({
-                    "username": elem[1],
-                    "discord_id": elem[2]
+                    "username": team[1],
+                    "discord_id": team[2]
                 })
             return result
         except:
             return None
         
-    def create_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str:
+    def create_league_of_legends(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str|None:
         # create user if not exists
         if self.utils.key_by_name(user_name,"user") == None:
             self.create(user_name,discord_id)
@@ -201,29 +206,32 @@ class UserModel:
         except:
             return None
         
-    def create_valorant(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str:  
+    def create_valorant(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str|None:  
         # create user if not exists
         if self.utils.key_by_name(user_name,"user") == None:
             self.create(user_name,discord_id)
-
-        query = 'INSERT INTO user_valorant (user_key, name, region'
-        values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
-        if position:
-            query += ", "
-            values += ", "
-            for i in range(len(position)):
-                query += f'position{i},'
-                values += f'"{position[i]["position"]}", '
-                for j in range(len(position[i]["champs"])):
-                    query += f'position{i}_champion{j}'
-                    values += f'"{position[i]["champs"][j]}"'
-                    if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
-                        query += ', '
-                        values += ', '
-        query += f') VALUES ({values})'
-        result = self.conn.execute(query)
-        self.conn.commit()
-        return f'ok {result.lastrowid}'
+        try:
+            query = 'INSERT INTO user_valorant (user_key, name, region'
+            values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
+            # TODO: replace all with a fitting script for valorant
+            if position:
+                query += ", "
+                values += ", "
+                for i in range(len(position)):
+                    query += f'position{i},'
+                    values += f'"{position[i]["position"]}", '
+                    for j in range(len(position[i]["champs"])):
+                        query += f'position{i}_champion{j}'
+                        values += f'"{position[i]["champs"][j]}"'
+                        if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
+                            query += ', '
+                            values += ', '
+            query += f') VALUES ({values})'
+            result = self.conn.execute(query)
+            self.conn.commit()
+            return f'ok {result.lastrowid}'
+        except:
+            return None
 
     def get_valorant(self,user_name:str|None) -> list|None:  
         try:
@@ -243,26 +251,96 @@ class TeamModel:
         self.conn = sqlite3.connect(db_file)
         self.utils = UtilsModels(self.conn)
     
-    def creat(self,name:str,game:str,guild_name:str|None,*member:list) -> str:
-        query = "INSERT INTO team (name, game"
-        values = f'{name}, {game}'
-        if guild_name:
-            query += ", guild_key"
-            values += f', {guild_name}'
-        query += f') VALUES ({values})'
-        result_team = self.conn.execute(query)
-        self.conn.commit()
-        result_user = None
-        for elem in member:
-            result_user = self.create_user(elem[0],name,elem[1])
+    def creat(self,name:str,game:str,guild_name:str|None,*member:list) -> str|None:
+        try:
+            query = "INSERT INTO team (name, game"
+            values = f'{name}, {game}'
+            if guild_name:
+                query += ", guild_key"
+                values += f', {guild_name}'
+            query += f') VALUES ({values})'
+            result_team = self.conn.execute(query)
             self.conn.commit()
-        if result_user:
-            return  "team " + f'ok {result_team.lastrowid}', "user " + f'ok {result_user.lastrowid}'
-        else:
-            return f'ok {result_team.lastrowid}'
+            result_user = None
+            for team in member:
+                result_user = self.create_user(team[0],name,team[1])
+                self.conn.commit()
+            if result_user:
+                return  "team " + f'ok {result_team.lastrowid}', "user " + f'ok {result_user.lastrowid}'
+            else:
+                return f'ok {result_team.lastrowid}'
+        except:
+            return None
 
-    def get(self,name:str) -> list|None:
-        pass 
+    def get(self,name:str|None) -> list|None:
+        try:
+            cur = self.conn.cursor()
+            query = "SELECT * FROM team "
+            result = []
+            if name:
+                query += f'WHERE name = "{name}"'
+            cur.execute(query)
+            for team in cur.fetchall():
+                team_dict = {
+                    "name": team[1],
+                    "game": team[2],
+                }
+                if team[3]:
+                    cur.execute(f'SELCT * FROM guild WHERE guild_key = {team[3]}')
+                    team["guild"] = cur.fetchall()[1]
+                if team[2] == "league_of_legends":
+                    team_dict["member"] = self.get_league_of_legends_memeber(team[0])
+                elif team[2] == "valorant":
+                    team_dict["member"] = self.get_valorant_memeber(team[0])
+                result.append(team_dict)
+            return result
+        except:
+            return None
+        
+    def get_league_of_legends_memeber(self,id:int) -> dict|None: 
+        try:
+            cur = self.conn.cursor()
+            cur.execute(f'SELCT * FROM user_team WHERE team_key = {id}')
+            roles = ["top","jng","mid","adc","sup"]
+            member = {
+                "main": {},
+                "substitute": []
+            }
+            for user_team in cur.fetchall():
+                cur.execute(f'SELCT name FROM user WHERE user_key = {user_team[0]}')
+                username = cur.fetchall()[0][0]
+                found = False
+                for role in roles:
+                    if "main_" + role == user_team[2]:
+                        member["main"][role] = username 
+                        found = True
+                    if "substitute_" + role == user_team[2]:
+                        member["substitute"].append({"role":role,"name":username})
+                        found = True
+                if found == False:
+                    member[user_team[2]] = username 
+            return member 
+        except:
+            return True
+        
+    def get_valorant_memeber(self,id:int) -> dict|None: 
+        try:
+            cur = self.conn.cursor()
+            cur.execute(f'SELCT * FROM user_team WHERE team_key = {id}')
+            member = {
+                "main": {},
+                "substitute": []
+            }
+            for user_team in cur.fetchall():
+                cur.execute(f'SELCT name FROM user WHERE user_key = {user_team[0]}')
+                username = cur.fetchall()[0][0]
+                found = False
+                # TODO: add main and sub positions 
+                if found == False:
+                    member[user_team[2]] = username 
+            return member 
+        except:
+            return True
 
     def create_user(self,user_name:str,team_name:str,role:str) -> str:
         try:
