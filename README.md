@@ -3,7 +3,7 @@
 Run `python main.py` inside the porject-folder.
 # API requests
 - replace `<game>` with league_of_legends or valorant
-- replace `<user_name>` with a username (not a game acc name or discord_name)
+- replace `<user_name>` with a username (game-acc or discord-name)
 - replace `<discord_id>`
 ## POST new user
 ```
