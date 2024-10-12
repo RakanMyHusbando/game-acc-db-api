@@ -1,10 +1,11 @@
-import sqlite3, os, dotenv
+import sqlite3
+import os, dotenv
 
 dotenv.load_dotenv() 
 
 class Schema:
     def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
-        self.conn = sqlite3.connect(db_file)
+        self.conn = sqlite3.connect(str(db_file))
         try:
             self.conn.execute("PRAGMA foreign_keys = ON")
         except:

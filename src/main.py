@@ -17,7 +17,7 @@ def create():
     if not game:
         return user.User().create(request.get_json()), 201
     elif game == "league_of_legends":
-        return user.LeagueOfLegends().create(), 201
+        return user.LeagueOfLegends().create(request.get_json()), 201
     elif game == "valorant":
         return user.Valorant().create(request.get_json()), 201
 
@@ -51,5 +51,5 @@ if __name__ == "__main__":
     Schema()
     app.run(
         debug=bool(os.getenv("DEBUG")),
-        port=int(os.getenv("PROT"))
+        port=os.getenv("PORT")
     )
