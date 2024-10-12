@@ -45,8 +45,7 @@ class LeagueOfLegends:
     def create(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str|None:
         # create user if not exists
         if self.utils.key_by_name(user_name,"user") == None:
-            self.user = User()
-            self.user.create(user_name,discord_id)
+            User().create(user_name,discord_id)
         try:
             query = 'INSERT INTO user_league_of_legends (user_key, name, region'
             values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
@@ -112,8 +111,7 @@ class Valorant:
     def create(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str|None:  
         # create user if not exists
         if self.utils.key_by_name(user_name,"user") == None:
-            self.user = User()
-            self.user.create(user_name,discord_id)
+            User().create(user_name,discord_id)
         try:
             query = 'INSERT INTO user_valorant (user_key, name, region'
             values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
@@ -158,13 +156,30 @@ class Team:
         
     def create(self,user_name:str,team_name:str,role:str) -> str|None:
         try:
-            query = f'''INSERT INTO team (user_key, team_key, role) VALUES ({
-                self.utils.key_by_name(user_name,"user")},{self.utils.key_by_name(team_name,"team")},{role})'''
+            query = f'INSERT INTO user_team (user_key, team_key, role) VALUES ({self.utils.key_by_name(user_name,"user")},{self.utils.key_by_name(team_name,"team")},{role})'
             result = self.conn.execute(query)
             self.conn.commit()
             return f'ok {result.lastrowid}'
         except: 
-            None
+            return None
 
-    def get(self,name:str,user_name:str) -> list|None:
-        pass
+    def get(self,team_name:str|None,user_name:str|None) -> list|None:
+        try: 
+            cur = self.conn.cursor()
+            query = "SELECT * FROM user_team "
+            result = []
+            if team_name:
+                team_key = self.utils.key_by_name(team_name,"user_team")
+                query += f'WHERE team_key = {team_key}'
+            cur.execute(query)
+            for user_team in cur.fetchall():
+                username = self.utils.name_where(user_team[0],"user_key","user")
+                if user_name == None or user_name == username:
+                    result.append({
+                        "username": username,
+                        "username": self.utils.name_where(user_team[1],"team_key","team"),
+                        "role": user_team[2]
+                    })
+            return result
+        except:
+            return None

@@ -2,7 +2,9 @@
 # Description
 Run `python main.py` inside the porject-folder.
 # API requests
-Replace `<game>` with league_of_legends or valorant.
+- replace `<game>` with league_of_legends or valorant
+- replace `<user_name>` with a username (not a game acc name or discord_name)
+- replace `<discord_id>`
 ## POST new user
 ```
 http://127.0.0.1:5000/api/user
@@ -52,12 +54,10 @@ http://127.0.0.1:5000/api/user?game=<game>
 http://127.0.0.1:5000/api/user
 ```
 ## GET user by username
-- replace `<user_name>`
 ```
 http://127.0.0.1:5000/api/user?username=<user_name>
 ```
 ## GET user by discord_id
-- replace `<discord_id>`
 ```
 http://127.0.0.1:5000/api/user?discord_id=<discord_id>
 ```
@@ -66,7 +66,6 @@ http://127.0.0.1:5000/api/user?discord_id=<discord_id>
 http://127.0.0.1:5000/api/<game>
 ```
 ## GET game account by username
-- replace `<user_name>`
 ```
-http://127.0.0.1:5000/api/<game>?username=<user_name>
+http://127.0.0.1:5000/api/user/<game>?username=<user_name>
 ```

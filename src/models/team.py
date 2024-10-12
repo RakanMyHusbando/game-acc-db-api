@@ -1,5 +1,6 @@
 import sqlite3, os, dotenv
 from utils import UtilsModels
+import user 
 
 dotenv.load_dotenv() 
 
@@ -20,7 +21,7 @@ class Team:
             self.conn.commit()
             result_user = None
             for team in member:
-                result_user = self.create_user(team[0],name,team[1])
+                result_user = user.Team().create(team[0],name,team[1])
                 self.conn.commit()
             if result_user:
                 return  "team " + f'ok {result_team.lastrowid}', "user " + f'ok {result_user.lastrowid}'

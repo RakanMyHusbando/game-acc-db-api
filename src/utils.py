@@ -22,6 +22,13 @@ class UtilsModels:
             return cur.fetchall()[0][0]
         except:
             return None 
+    def name_where(self,where_key:str,where_value:int,table:str):
+        try:
+            cur = self.conn.cursor()
+            cur.execute(f'SELECT name FROM {table} WHERE {where_key} = {where_value}')
+            return cur.fetchall()[0][0]
+        except:
+            return None 
 
 class UtilsMain:        
     def res_get(self,data):
