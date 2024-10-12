@@ -63,7 +63,7 @@ http://127.0.0.1:5000/api/user?discord_id=<discord_id>
 ```
 ## GET game accounts
 ```
-http://127.0.0.1:5000/api/<game>
+http://127.0.0.1:5000/api/user/<game>
 ```
 ## GET game account by username
 ```
