@@ -19,7 +19,6 @@ class Schema:
                 CREATE TABLE IF NOT EXISTS user_league_of_legends (
                     user_key INTEGER NOT NULL,
                     name TEXT NOT NULL,
-                    region TEXT NOT NULL,
                     position0 TEXT,
                     position0_champion0 TEXT,
                     position0_champion1 TEXT,
@@ -35,7 +34,6 @@ class Schema:
                 CREATE TABLE IF NOT EXISTS user_valorant (
                     user_key TEXT NOT NULL,
                     username TEXT NOT NULL,
-                    region TEXT NOT NULL,
                     position0 TEXT,
                     position0_agent0 TEXT,
                     position0_agent1 TEXT,
