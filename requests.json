@@ -1,13 +1,126 @@
 [
     {
-        "path": [],
+        "path": ["user"],
         "vars": [],
         "body": {
-
+            "user_name": "user_without_dc_id"     
         }
     },
     {
-        "path": [],
+        "path": ["user"],
+        "vars": [],
+        "body": {
+            "user_name": "user_with_dc_id",
+            "discord_id": "user_dc_id"
+        }
+    },
+    {
+        "path": ["user"],
+        "vars": [],
+        "body": {
+            "user_name": "user_with_dc_id_1",
+            "discord_id": "user_dc_id_1"
+        }
+    },
+    {
+        "path": ["user"],
+        "vars": [],
+        "body": {
+            "user_name": "user_with_dc_id_2",
+            "discord_id": "user_dc_id_2"
+        }
+    },
+    {
+        "path": ["user"],
+        "vars": [
+            ["game","league_of_legends"]
+        ],
+        "body": {
+            "user_name": "user_with_dc_id",
+            "discord_id": "user_dc_id",
+            "ingame_name": "ingame_name",
+            "region": "euw",
+            "position": [
+                {
+                    "position": "top",
+                    "champs": [
+                        "champ0",
+                        "champ1",
+                        "champ2"
+                    ]
+                },
+                {
+                    "position": "jng",
+                    "champs": [
+                        "champ3",
+                        "champ4",
+                        "champ5"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "path": ["user"],
+        "vars": [
+            ["game","league_of_legends"]
+        ],
+        "body": {
+            "user_name": "new_game_user_with_dc_id",
+            "discord_id": "new_game_user_dc_id",
+            "ingame_name": "new_game_ingame_name",
+            "region": "euw",
+            "position": [
+                {
+                    "position": "mid",
+                    "champs": [
+                        "champ0",
+                        "champ1",
+                        "champ2"
+                    ]
+                },
+                {
+                    "position": "adc",
+                    "champs": [
+                        "champ3",
+                        "champ4",
+                        "champ5"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "path": ["user"],
+        "vars": [
+            ["game","league_of_legends"]
+        ],
+        "body": {
+            "user_name": "user_without_dc_id",
+            "ingame_name": "new_game_ingame_name",
+            "region": "euw"
+        }
+    },
+    {
+        "path": ["user"],
+        "vars": [
+            ["username","user_with_dc_id_2"]
+        ]
+    },
+    {
+        "path": ["user"],
+        "vars": [
+            ["discord_id","user_dc_id"]
+        ]
+    },
+    {
+        "path": ["user","league_of_legends"],
         "vars": []
+    },
+    {
+        "path": ["user","league_of_legends"],
+        "vars": [
+            ["username","new_game_user_with_dc_id"]
+        ]
     }
 ]
