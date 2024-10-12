@@ -1,7 +1,12 @@
 from flask import Flask, request
-from models import Schema
-from services import UserServices
+from models.schema import Schema
 from utils import UtilsMain
+import services.user as user 
+import services.team as team
+import services.guild as guild
+import os, dotenv
+
+dotenv.load_dotenv() 
 
 utils = UtilsMain()
 app = Flask(__name__)
@@ -10,11 +15,11 @@ app = Flask(__name__)
 def create():
     game = request.args.get("game")
     if not game:
-        return UserServices().create(request.get_json()), 201
+        return user.User().create(request.get_json()), 201
     elif game == "league_of_legends":
-        return UserServices().create_league_of_legends(), 201
+        return user.LeagueOfLegends().create(request.get_json()), 201
     elif game == "valorant":
-        return UserServices().create_valorant(request.get_json()), 201
+        return user.Valorant().create(request.get_json()), 201
 
 @app.route("/api/user",methods = ["GET"])
 def get():
@@ -28,20 +33,23 @@ def get():
     elif discord_id:
         key = "discord_id"
         value = discord_id
-    result = UserServices().get(key,value)
+    result = user.User().get(key,value)
     return utils.res_get(result)
 
-@app.route("/api/<string:game>",methods = ["GET"])
+@app.route("/api/user/<string:game>",methods = ["GET"])
 def get_game_user(game:str):
     username = request.args.get("username")
     result = None
     if game == "league_of_legends":
-        result = UserServices().get_league_of_legends(username)
+        result = user.LeagueOfLegends().get(username)
     elif game == "valorant":
-        result =  UserServices().get_valorant(username)
+        result =  user.Valorant().get(username)
     return utils.res_get(result)
 
 
 if __name__ == "__main__":
     Schema()
-    app.run(debug=True)
+    app.run(
+        debug=bool(os.getenv("DEBUG")),
+        port=os.getenv("PORT")
+    )

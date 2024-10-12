@@ -1,0 +1,185 @@
+import sqlite3, os, dotenv
+from utils import UtilsModels
+
+dotenv.load_dotenv() 
+
+class User:
+    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
+        self.conn = sqlite3.connect(db_file)
+        self.utils = UtilsModels(self.conn)
+
+    def create(self,user_name:str,discord_id:str|None) -> str|None:
+        try: 
+            query = f'INSERT INTO user (name) VALUES ("{user_name}")'
+            if discord_id:
+                query = f'INSERT INTO user (name, discord_id) VALUES ("{user_name}", "{discord_id}")'
+            result = self.conn.execute(query)
+            self.conn.commit()
+            return f'ok {result.lastrowid}'
+        except:
+            return None
+        
+    def get(self,search_by:str|None,value:str|None) -> list|None:
+        try: 
+            cur = self.conn.cursor()
+            query = "SELECT * FROM user "
+            if search_by and value:
+                query += f'WHERE {search_by} = "{value}"'
+            print(query)
+            cur.execute(query)
+            result = []
+            for team in cur.fetchall():
+                result.append({
+                    "username": team[1],
+                    "discord_id": team[2]
+                })
+            return result
+        except:
+            return None
+        
+class LeagueOfLegends:
+    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
+        self.conn = sqlite3.connect(db_file)
+        self.utils = UtilsModels(self.conn)
+
+    def create(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str|None:
+        # create user if not exists
+        if self.utils.key_by_name(user_name,"user") == None:
+            User().create(user_name,discord_id)
+        try:
+            query = 'INSERT INTO user_league_of_legends (user_key, name, region'
+            values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
+            if position:
+                query += ", "
+                values += ", "
+                for i in range(len(position)):
+                    query += f'position{i},'
+                    values += f'"{position[i]["position"]}", '
+                    for j in range(len(position[i]["champs"])):
+                        query += f'position{i}_champion{j}'
+                        values += f'"{position[i]["champs"][j]}"'
+                        if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
+                            query += ', '
+                            values += ', '
+            query += f') VALUES ({values})'
+            result = self.conn.execute(query)
+            self.conn.commit()
+            return f'ok {result.lastrowid}'
+        except:
+            return None
+        
+    def get(self,user_name:str|None) -> list|None:  
+        try:
+            cur = self.conn.cursor()
+            result = []
+            query = "SELECT * FROM user_league_of_legends "
+            if user_name:
+                cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
+                query += f'WHERE user_key = {cur.fetchall()[0][0]}'
+            cur.execute(query)
+            for acc in cur.fetchall():
+                posititon = []
+                pos = { "position": None, "champs": []}
+                for i in range(len(acc)):
+                    if i == 0:
+                        pos = { "position": None, "champs": []}
+                    if i == len(acc)-1 and pos["position"]:
+                        posititon.append(pos)
+                    if acc[i]:
+                        if i == 3 or i == 7: 
+                            pos["position"] = acc[i]
+                        elif i > 3: 
+                            pos["champs"].append(acc[i])
+                this_acc = {
+                    "ingame_name": acc[1],
+                    "region": acc[2],
+                    "position": posititon
+                }
+                if user_name == None:
+                    cur.execute(f'SELECT * FROM user WHERE user_key = {acc[0]}')
+                    this_acc["userna"] = cur.fetchall()[0][1]
+                result.append(this_acc)
+            return result
+        except:
+            return None
+        
+class Valorant:
+    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
+        self.conn = sqlite3.connect(db_file)
+        self.utils = UtilsModels(self.conn)
+
+    def create(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str|None:  
+        # create user if not exists
+        if self.utils.key_by_name(user_name,"user") == None:
+            User().create(user_name,discord_id)
+        try:
+            query = 'INSERT INTO user_valorant (user_key, name, region'
+            values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
+            # TODO: replace all with valorant logic
+            if position:
+                query += ", "
+                values += ", "
+                for i in range(len(position)):
+                    query += f'position{i},'
+                    values += f'"{position[i]["position"]}", '
+                    for j in range(len(position[i]["champs"])):
+                        query += f'position{i}_champion{j}'
+                        values += f'"{position[i]["champs"][j]}"'
+                        if not (i == len(position)-1 and j == len(position[i]["champs"])-1):
+                            query += ', '
+                            values += ', '
+            query += f') VALUES ({values})'
+            result = self.conn.execute(query)
+            self.conn.commit()
+            return f'ok {result.lastrowid}'
+        except:
+            return None
+        
+    def get(self,user_name:str|None) -> list|None:  
+        try:
+            cur = self.conn.cursor()
+            result = []
+            query = "SELECT * FROM user_valorant "
+            if user_name:
+                cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
+                query += f'WHERE user_key = {cur.fetchall()[0][0]}'
+            # TODO: add valorant logic
+            cur.execute(query)
+            return result
+        except:
+            return None
+
+class Team:
+    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
+        self.conn = sqlite3.connect(db_file)
+        self.utils = UtilsModels(self.conn)
+        
+    def create(self,user_name:str,team_name:str,role:str) -> str|None:
+        try:
+            query = f'INSERT INTO user_team (user_key, team_key, role) VALUES ({self.utils.key_by_name(user_name,"user")},{self.utils.key_by_name(team_name,"team")},{role})'
+            result = self.conn.execute(query)
+            self.conn.commit()
+            return f'ok {result.lastrowid}'
+        except: 
+            return None
+
+    def get(self,team_name:str|None,user_name:str|None) -> list|None:
+        try: 
+            cur = self.conn.cursor()
+            query = "SELECT * FROM user_team "
+            result = []
+            if team_name:
+                team_key = self.utils.key_by_name(team_name,"user_team")
+                query += f'WHERE team_key = {team_key}'
+            cur.execute(query)
+            for user_team in cur.fetchall():
+                username = self.utils.name_where(user_team[0],"user_key","user")
+                if user_name == None or user_name == username:
+                    result.append({
+                        "username": username,
+                        "username": self.utils.name_where(user_team[1],"team_key","team"),
+                        "role": user_team[2]
+                    })
+            return result
+        except:
+            return None

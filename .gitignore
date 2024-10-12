@@ -1,2 +1,5 @@
-__pycache__
-data.db
+src/__pycache__
+src/models/__pycache__
+src/services/__pycache__
+src/data.db
+.env
