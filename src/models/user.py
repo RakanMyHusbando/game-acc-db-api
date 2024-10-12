@@ -42,13 +42,13 @@ class LeagueOfLegends:
         self.conn = sqlite3.connect(db_file)
         self.utils = UtilsModels(self.conn)
 
-    def create(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str|None:
+    def create(self,user_name:str,ingame_name:str,position:list|None,discord_id:str|None) -> str|None:
         # create user if not exists
         if self.utils.key_by_name(user_name,"user") == None:
             User().create(user_name,discord_id)
         try:
-            query = 'INSERT INTO user_league_of_legends (user_key, name, region'
-            values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
+            query = 'INSERT INTO user_league_of_legends (user_key, name '
+            values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}"'
             if position:
                 query += ", "
                 values += ", "
@@ -92,7 +92,6 @@ class LeagueOfLegends:
                             pos["champs"].append(acc[i])
                 this_acc = {
                     "ingame_name": acc[1],
-                    "region": acc[2],
                     "position": posititon
                 }
                 if user_name == None:
@@ -108,13 +107,13 @@ class Valorant:
         self.conn = sqlite3.connect(db_file)
         self.utils = UtilsModels(self.conn)
 
-    def create(self,user_name:str,ingame_name:str,region:str,position:list|None,discord_id:str|None) -> str|None:  
+    def create(self,user_name:str,ingame_name:str,position:list|None,discord_id:str|None) -> str|None:  
         # create user if not exists
         if self.utils.key_by_name(user_name,"user") == None:
             User().create(user_name,discord_id)
         try:
-            query = 'INSERT INTO user_valorant (user_key, name, region'
-            values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}", "{region}"'
+            query = 'INSERT INTO user_valorant (user_key, name'
+            values = f'{self.utils.key_by_name(user_name,"user")}, "{ingame_name}"'
             # TODO: replace all with valorant logic
             if position:
                 query += ", "

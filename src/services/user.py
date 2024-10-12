@@ -27,7 +27,6 @@ class LeagueOfLegends:
         return self.model.create(
             utils.try_key(input,"user_name"),
             utils.try_key(input,"ingame_name"),
-            utils.try_key(input,"region"),
             utils.try_key(input,"position"),
             utils.try_key(input,"discord_id")
         )
@@ -40,16 +39,10 @@ class Valorant:
         self.model = model.Valorant()
 
     def create(self,input:dict) -> str:
-        return self.model.create(
-            utils.try_key(input,"user_name"),
-            utils.try_key(input,"ingame_name"),
-            utils.try_key(input,"region"),
-            None,
-            utils.try_key(input,"discord_id")
-        )
+        pass
     
     def get(self,input) -> list:
-        return self.model.get(input)
+        return
     
 class Team:
     def __init__(self) -> None:
