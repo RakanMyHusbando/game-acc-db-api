@@ -1,6 +1,5 @@
-import sqlite3, os, dotenv
+import sqlite3, os, dotenv, user
 from utils import UtilsModels
-import user 
 
 dotenv.load_dotenv() 
 
@@ -9,7 +8,7 @@ class Team:
         self.conn = sqlite3.connect(db_file)
         self.utils = UtilsModels(self.conn)
     
-    def creat(self,name:str,game:str,guild_name:str|None,*member:list) -> str|None:
+    def creat(self,name:str,game:str,guild_name:str|None,member:list[list]|None) -> str|None:
         try:
             query = "INSERT INTO team (name, game"
             values = f'{name}, {game}'
@@ -20,9 +19,10 @@ class Team:
             result_team = self.conn.execute(query)
             self.conn.commit()
             result_user = None
-            for team in member:
-                result_user = user.Team().create(team[0],name,team[1])
-                self.conn.commit()
+            if member:
+                for elem in member:
+                    result_user = user.Team().create(elem[0],name,elem[1])
+                    self.conn.commit()
             if result_user:
                 return  "team " + f'ok {result_team.lastrowid}', "user " + f'ok {result_user.lastrowid}'
             else:

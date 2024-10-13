@@ -11,15 +11,21 @@ dotenv.load_dotenv()
 utils = UtilsMain()
 app = Flask(__name__)
 
+########
+# USER #
+########
+
 @app.route("/api/user",methods = ["POST"])
 def create():
     game = request.args.get("game")
+    result = None
     if not game:
-        return user.User().create(request.get_json()), 201
+        result = user.User().create(request.get_json())
     elif game == "league_of_legends":
-        return user.LeagueOfLegends().create(), 201
+        result = user.LeagueOfLegends().create(request.get_json())
     elif game == "valorant":
-        return user.Valorant().create(request.get_json()), 201
+        result = user.Valorant().create(request.get_json())
+    return utils.res_post(result)
 
 @app.route("/api/user",methods = ["GET"])
 def get():
@@ -33,8 +39,9 @@ def get():
     elif discord_id:
         key = "discord_id"
         value = discord_id
-    result = user.User().get(key,value)
-    return utils.res_get(result)
+    return utils.res_get(
+        user.User().get(key,value)
+    )
 
 @app.route("/api/user/<string:game>",methods = ["GET"])
 def get_game_user(game:str):
@@ -46,10 +53,26 @@ def get_game_user(game:str):
         result =  user.Valorant().get(username)
     return utils.res_get(result)
 
+########
+# TEAM #
+########
+
+@app.route("/api/team",methods = ["POST"])
+def create_team():
+    return utils.res_post(
+        team.Team().create(request.get_json())
+    )
+
+@app.route("/api/team",methods = ["POST"])
+def get_team():
+    teamname = request.args.get("teamname")
+    return utils.res_get(
+        team.Team().get(teamname)
+    )
 
 if __name__ == "__main__":
     Schema()
     app.run(
         debug=bool(os.getenv("DEBUG")),
-        port=int(os.getenv("PROT"))
+        port=int(os.getenv("PORT"))
     )
