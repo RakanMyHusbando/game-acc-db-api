@@ -122,5 +122,26 @@
         "vars": [
             ["username","new_game_user_with_dc_id"]
         ]
-    }
+    },
+    {
+        "team_name": "team_name",
+        "game": "league_of_legends"
+    },
+    {
+        "team_name": "team_name0",
+        "game": "league_of_legends",
+        "member": {
+          "role0": "user_without_dc_id",
+          "main": {
+            "top": "user_with_dc_id"
+          },
+          "substitute": [
+            {
+              "name": "new_game_user_with_dc_id",
+              "role": "mid"
+            }
+          ]
+        }
+      } 
+       
 ]
