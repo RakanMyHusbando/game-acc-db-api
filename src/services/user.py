@@ -43,17 +43,3 @@ class Valorant:
     
     def get(self,input) -> list:
         return
-    
-class Team:
-    def __init__(self) -> None:
-        self.model = model.Team()
-
-    def create(self,input) -> str:
-        return self.model.create(
-            utils.try_key(input,"user_name"),
-            utils.try_key(input,"team_name"),
-            utils.try_key(input,"role")
-        )
-    
-    def get(self,input) -> list:
-        pass

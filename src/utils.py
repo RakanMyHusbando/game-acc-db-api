@@ -36,3 +36,8 @@ class UtilsMain:
         if data != None:
             result["status"] = 200
         return jsonify(result), result["status"]
+    def res_post(self,response):
+        result = { "response": response, "status": 404 }
+        if response != None:
+            result["status"] = 201
+        return jsonify(result), result["status"]

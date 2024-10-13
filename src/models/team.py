@@ -1,28 +1,62 @@
 import sqlite3, os, dotenv
 from utils import UtilsModels
-import user 
 
 dotenv.load_dotenv() 
 
+class User:
+    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
+        self.conn = sqlite3.connect(db_file)
+        self.utils = UtilsModels(self.conn)
+        
+    def create(self,user_name:str,team_name:str,role:str) -> str|None:
+        try:
+            query = f'INSERT INTO user_team (user_key, team_key, role) VALUES ({self.utils.key_by_name(user_name,"user")},{self.utils.key_by_name(team_name,"team")},"{role}")'
+            result = self.conn.execute(query)
+            self.conn.commit()
+            return f'ok {result.lastrowid}'
+        except: 
+            return None
+
+    def get(self,team_name:str|None,user_name:str|None) -> list|None:
+        try: 
+            cur = self.conn.cursor()
+            query = "SELECT * FROM user_team "
+            result = []
+            if team_name:
+                team_key = self.utils.key_by_name(team_name,"team")
+                query += f'WHERE team_key = {team_key}'
+            cur.execute(query)
+            for elem in cur.fetchall():
+                player = {
+                    "user_name": self.utils.name_where("user_key",elem[0],"user"),
+                    "team_name": self.utils.name_where("team_key",elem[1],"team"),
+                    "role": elem[2]
+                }
+                if user_name == None or user_name == player["user_name"]:
+                    result.append(player)
+            return result
+        except:
+            return None
+        
 class Team:
     def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
         self.conn = sqlite3.connect(db_file)
         self.utils = UtilsModels(self.conn)
     
-    def creat(self,name:str,game:str,guild_name:str|None,*member:list) -> str|None:
+    def creat(self,name:str,game:str,guild_name:str|None,member:list[list]|None) -> str|None:
         try:
             query = "INSERT INTO team (name, game"
-            values = f'{name}, {game}'
+            values = f'"{name}", "{game}"'
             if guild_name:
                 query += ", guild_key"
-                values += f', {guild_name}'
+                values += f', "{guild_name}"'
             query += f') VALUES ({values})'
             result_team = self.conn.execute(query)
             self.conn.commit()
             result_user = None
-            for team in member:
-                result_user = user.Team().create(team[0],name,team[1])
-                self.conn.commit()
+            if member:
+                for elem in member:
+                    result_user = User().create(elem[0],name,elem[1])
             if result_user:
                 return  "team " + f'ok {result_team.lastrowid}', "user " + f'ok {result_user.lastrowid}'
             else:
@@ -47,9 +81,9 @@ class Team:
                     cur.execute(f'SELCT * FROM guild WHERE guild_key = {team[3]}')
                     team["guild"] = cur.fetchall()[1]
                 if team[2] == "league_of_legends":
-                    team_dict["member"] = self.league_of_legends_memeber(team[0])
-                elif team[2] == "valorant":
-                    team_dict["member"] = self.valorant_memeber(team[0])
+                    member = self.league_of_legends_memeber(team[0])
+                    if member:
+                        team_dict["member"] = member
                 result.append(team_dict)
             return result
         except:
@@ -79,7 +113,7 @@ class Team:
                     member[user_team[2]] = username 
             return member 
         except:
-            return True
+            return None
         
     def valorant_memeber(self,id:int) -> dict|None: 
         try:

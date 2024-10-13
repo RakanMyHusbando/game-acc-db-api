@@ -11,15 +11,25 @@ dotenv.load_dotenv()
 utils = UtilsMain()
 app = Flask(__name__)
 
+########
+# USER #
+########
+
 @app.route("/api/user",methods = ["POST"])
 def create():
     game = request.args.get("game")
+    result = None
     if not game:
-        return user.User().create(request.get_json()), 201
+        result = user.User().create(request.get_json())
     elif game == "league_of_legends":
+<<<<<<< HEAD
         return user.LeagueOfLegends().create(request.get_json()), 201
+=======
+        result = user.LeagueOfLegends().create(request.get_json())
+>>>>>>> in-progress
     elif game == "valorant":
-        return user.Valorant().create(request.get_json()), 201
+        result = user.Valorant().create(request.get_json())
+    return utils.res_post(result)
 
 @app.route("/api/user",methods = ["GET"])
 def get():
@@ -33,8 +43,9 @@ def get():
     elif discord_id:
         key = "discord_id"
         value = discord_id
-    result = user.User().get(key,value)
-    return utils.res_get(result)
+    return utils.res_get(
+        user.User().get(key,value)
+    )
 
 @app.route("/api/user/<string:game>",methods = ["GET"])
 def get_game_user(game:str):
@@ -46,10 +57,43 @@ def get_game_user(game:str):
         result =  user.Valorant().get(username)
     return utils.res_get(result)
 
+########
+# TEAM #
+########
+
+@app.route("/api/team",methods = ["POST"])
+def create_team():
+    return utils.res_post(
+        team.Team().create(request.get_json())
+    )
+
+@app.route("/api/team",methods = ["GET"])
+def get_team():
+    teamname = request.args.get("teamname")
+    return utils.res_get(
+        team.Team().get(teamname)
+    )
+
+@app.route("/api/team/user",methods = ["POST"])
+def create_user_team():
+    return utils.res_post(
+        team.User().create(request.get_json())
+    )
+
+@app.route("/api/team/user",methods = ["GET"])
+def get_user_team():
+    username = request.args.get("username")
+    return utils.res_get(
+        team.User().get(username)
+    )
 
 if __name__ == "__main__":
     Schema()
     app.run(
         debug=bool(os.getenv("DEBUG")),
+<<<<<<< HEAD
         port=os.getenv("PORT")
+=======
+        port=int(os.getenv("PORT"))
+>>>>>>> in-progress
     )

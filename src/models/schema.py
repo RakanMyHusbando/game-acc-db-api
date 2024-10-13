@@ -57,7 +57,7 @@ class Schema:
                     team_key INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
                     game TEXT NOT NULL,
-                    guild_key TEXT, 
+                    guild_key INTEGER, 
                     FOREIGN KEY (guild_key) REFERENCES guild (guild_key)
                 )
             """,

@@ -25,7 +25,6 @@ class User:
             query = "SELECT * FROM user "
             if search_by and value:
                 query += f'WHERE {search_by} = "{value}"'
-            print(query)
             cur.execute(query)
             result = []
             for team in cur.fetchall():
@@ -148,37 +147,4 @@ class Valorant:
         except:
             return None
 
-class Team:
-    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
-        self.conn = sqlite3.connect(db_file)
-        self.utils = UtilsModels(self.conn)
-        
-    def create(self,user_name:str,team_name:str,role:str) -> str|None:
-        try:
-            query = f'INSERT INTO user_team (user_key, team_key, role) VALUES ({self.utils.key_by_name(user_name,"user")},{self.utils.key_by_name(team_name,"team")},{role})'
-            result = self.conn.execute(query)
-            self.conn.commit()
-            return f'ok {result.lastrowid}'
-        except: 
-            return None
 
-    def get(self,team_name:str|None,user_name:str|None) -> list|None:
-        try: 
-            cur = self.conn.cursor()
-            query = "SELECT * FROM user_team "
-            result = []
-            if team_name:
-                team_key = self.utils.key_by_name(team_name,"user_team")
-                query += f'WHERE team_key = {team_key}'
-            cur.execute(query)
-            for user_team in cur.fetchall():
-                username = self.utils.name_where(user_team[0],"user_key","user")
-                if user_name == None or user_name == username:
-                    result.append({
-                        "username": username,
-                        "username": self.utils.name_where(user_team[1],"team_key","team"),
-                        "role": user_team[2]
-                    })
-            return result
-        except:
-            return None
