@@ -18,7 +18,7 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS user_league_of_legends (
                     user_key INTEGER NOT NULL,
-                    name TEXT NOT NULL,
+                    name TEXT NOT NULL UNIQUE,
                     position0 TEXT,
                     position0_champion0 TEXT,
                     position0_champion1 TEXT,
@@ -33,7 +33,7 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS user_valorant (
                     user_key TEXT NOT NULL,
-                    username TEXT NOT NULL,
+                    name TEXT NOT NULL UNIQUE,
                     position0 TEXT,
                     position0_agent0 TEXT,
                     position0_agent1 TEXT,
@@ -48,14 +48,14 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS guild (
                     guild_key INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT,
+                    name TEXT UNIQUE,
                     description TEXT
                 )
             """,
             """
                 CREATE TABLE IF NOT EXISTS team (
                     team_key INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
+                    name TEXT NOT NULL UNIQUE,
                     game TEXT NOT NULL,
                     guild_key INTEGER, 
                     FOREIGN KEY (guild_key) REFERENCES guild (guild_key)
@@ -79,8 +79,8 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS user (
                     user_key INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    discord_id TEXT
+                    name TEXT NOT NULL UNIQUE,
+                    discord_id TEXT UNIQUE
                 )
             """,
             """
