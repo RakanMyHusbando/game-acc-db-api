@@ -97,3 +97,17 @@ http://127.0.0.1:5000/api/team
 ```
 http://127.0.0.1:5000/api/team?teamname=<team_name>
 ```
+## POST add new user to team
+```
+http://127.0.0.1:5000/api/team/user
+```
+### req-body
+- if the user is part of the main-team then write his role `main_<role>` 
+- if the user is part of the substitutes then write his role `substitute_<role>`
+```
+{
+  "user_name": string,
+  "team_name": string,
+  "role": string
+}
+```

@@ -63,11 +63,24 @@ def create_team():
         team.Team().create(request.get_json())
     )
 
-@app.route("/api/team",methods = ["POST"])
+@app.route("/api/team",methods = ["GET"])
 def get_team():
     teamname = request.args.get("teamname")
     return utils.res_get(
         team.Team().get(teamname)
+    )
+
+@app.route("/api/team/user",methods = ["POST"])
+def create_user_team():
+    return utils.res_post(
+        team.User().create(request.get_json())
+    )
+
+@app.route("/api/team/user",methods = ["GET"])
+def get_user_team():
+    username = request.args.get("username")
+    return utils.res_get(
+        team.User().get(username)
     )
 
 if __name__ == "__main__":
