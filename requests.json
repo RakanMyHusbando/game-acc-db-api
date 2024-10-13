@@ -39,7 +39,6 @@
             "user_name": "user_with_dc_id",
             "discord_id": "user_dc_id",
             "ingame_name": "ingame_name",
-            "region": "euw",
             "position": [
                 {
                     "position": "top",
@@ -69,7 +68,6 @@
             "user_name": "new_game_user_with_dc_id",
             "discord_id": "new_game_user_dc_id",
             "ingame_name": "new_game_ingame_name",
-            "region": "euw",
             "position": [
                 {
                     "position": "mid",
@@ -97,8 +95,7 @@
         ],
         "body": {
             "user_name": "user_without_dc_id",
-            "ingame_name": "new_game_ingame_name",
-            "region": "euw"
+            "ingame_name": "new_game_ingame_name"
         }
     },
     {
@@ -124,24 +121,44 @@
         ]
     },
     {
-        "team_name": "team_name",
-        "game": "league_of_legends"
+        "path": ["team"],
+        "vars": [],
+        "body": {
+            "team_name": "team_name",
+            "game": "league_of_legends"
+        }
     },
     {
-        "team_name": "team_name0",
-        "game": "league_of_legends",
-        "member": {
-          "role0": "user_without_dc_id",
-          "main": {
-            "top": "user_with_dc_id"
-          },
-          "substitute": [
-            {
-              "name": "new_game_user_with_dc_id",
-              "role": "mid"
+        "path": ["team"],
+        "vars": [],
+        "body": {
+            "team_name": "team_name0",
+            "game": "league_of_legends",
+            "member": {
+                "role0": "user_without_dc_id",
+                "main": {
+                    "top": "user_with_dc_id"
+                },
+                "substitute": [
+                    {
+                        "name": "new_game_user_with_dc_id",
+                        "role": "mid"
+                    }
+                ]
             }
-          ]
         }
-      } 
-       
+    },
+    {
+        "path": ["team","user"],
+        "vars": [],
+        "body": {
+            "team_name": "team_name0",
+            "user_name": "user_with_dc_id_2",
+            "role": "role1"
+        }
+    },
+    {
+        "path": ["team","user"],
+        "vars": []
+    }   
 ]

@@ -18,6 +18,10 @@ const post = async (url,body) => {
         console.log(body)
         const response = await fetch(url, {
             method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(body)
         })
         return `${new Date()}; ${url}; ${response.status}`
