@@ -72,14 +72,14 @@ http://127.0.0.1:5000/api/team
   "game": string,
   "guild_name": null|string,
   "member": null|{
-    "role0": string (user_name)
-    "role1": string (user_name)
+    "role0": string (user_name),
+    "role1": string (user_name),
     ...
     "main": {
       "top": string (user_name),
       "jng": string (user_name),
       ...
-    }
+    },
     "substitute": [
       {
         "name": string (user_name),
