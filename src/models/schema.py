@@ -64,15 +64,16 @@ class Schema:
             """
                 CREATE TABLE IF NOT EXISTS team_discord (
                     team_key INTEGER NOT NULL,
-                    role_team_id TEXT,
-                    role_player_id TEXT,
-                    role_tryout_id TEXT,
-                    role_coach_id TEXT,
-                    category_id TEXT,
-                    channel_team_roaster TEXT,
-                    channel_team_chat TEXT,
-                    channel_shogun_chat TEXT,
-                    channel_team_voice TEXT,
+                    server_id TEXt NOT NULL UNIQUE,
+                    role_team_id TEXT UNIQUE,
+                    role_player_id TEXT UNIQUE,
+                    role_tryout_id TEXT UNIQUE,
+                    role_coach_id TEXT UNIQUE,
+                    category_id TEXT UNIQUE,
+                    channel_team_roaster_id TEXT UNIQUE,
+                    channel_team_chat_id TEXT UNIQUE,
+                    channel_shogun_chat_id TEXT UNIQUE,
+                    channel_team_voice_id TEXT UNIQUE,
                     FOREIGN KEY (team_key) REFERENCES team (team_key)
                 )
             """,

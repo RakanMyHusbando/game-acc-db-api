@@ -43,7 +43,7 @@ class Team:
         self.conn = sqlite3.connect(db_file)
         self.utils = UtilsModels(self.conn)
     
-    def creat(self,name:str,game:str,guild_name:str|None,member:list[list]|None) -> str|None:
+    def create(self,name:str,game:str,guild_name:str|None,member:list[list]|None) -> str|None:
         try:
             query = "INSERT INTO team (name, game"
             values = f'"{name}", "{game}"'
@@ -133,4 +133,36 @@ class Team:
             return member 
         except:
             return True
+        
+class Discord:
+    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
+        self.conn = sqlite3.connect(db_file)
+        self.utils = UtilsModels(self.conn)
 
+    def create(self,name:str,server_id:str,category_id:str|None,role_id:dict|None,channel_id:dict|None) -> str|None:
+        try:
+            team_key = self.utils.key_by_name(name,"team")
+            if not team_key:
+                raise Exception()
+            query = "INSERT INTO team_discord (team_key, server_id"
+            values = f'{team_key}, "{name}"'
+            if category_id:
+                query += ", category_id"
+                values += f', {category_id}'
+            if role_id:
+                for key in role_id:
+                    query += f', role_{key}_id'
+                    values += f', {role_id[key]}'
+            if channel_id:
+                for key in channel_id:
+                    query += f', channel_{key}_id'
+                    values += f', {channel_id[key]}'
+            query += f') VALUES ({values})'
+            result = self.conn.execute(query)
+            self.conn.commit()
+            return f'ok {result.lastrowid}'
+        except:
+            return None
+        
+    def get(self,name:str|None) -> list|None:
+        pass
