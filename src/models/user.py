@@ -93,9 +93,11 @@ class LeagueOfLegends:
                     "ingame_name": acc[1],
                     "position": posititon
                 }
-                if user_name == None:
+                if user_name:
+                    this_acc["username"] = user_name
+                else:
                     cur.execute(f'SELECT * FROM user WHERE user_key = {acc[0]}')
-                    this_acc["userna"] = cur.fetchall()[0][1]
+                    this_acc["username"] = cur.fetchall()[0][1]
                 result.append(this_acc)
             return result
         except:

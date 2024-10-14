@@ -84,7 +84,7 @@ def get_user_team():
     )
 
 @app.route("/api/team/discord",methods = ["POST"])
-def get_user_team():
+def creat_team_discord():
     utils.res_post(
         team.Discord().create(request.get_json())
     )
