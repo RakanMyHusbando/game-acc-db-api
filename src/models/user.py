@@ -71,6 +71,7 @@ class LeagueOfLegends:
         try:
             cur = self.conn.cursor()
             result = []
+            player = {}
             query = "SELECT * FROM user_league_of_legends "
             if user_name:
                 cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
@@ -89,16 +90,22 @@ class LeagueOfLegends:
                             pos["position"] = acc[i]
                         elif i > 3: 
                             pos["champs"].append(acc[i])
-                this_acc = {
+                cur.execute(f'SELECT * FROM user WHERE user_key = {acc[0]}')
+                user = cur.fetchall()[0]
+                if (user[1] in player) == False:
+                    player[user[1]] = { "discord_id": user[2], "accounts": [] }
+                print(user)
+                player[user[1]]["accounts"].append({
                     "ingame_name": acc[1],
                     "position": posititon
-                }
-                if user_name:
-                    this_acc["username"] = user_name
-                else:
-                    cur.execute(f'SELECT * FROM user WHERE user_key = {acc[0]}')
-                    this_acc["username"] = cur.fetchall()[0][1]
-                result.append(this_acc)
+                })
+                
+            for key in player:
+                this_player = {"user_name": key, "accounts": player[key]["accounts"]}
+                
+                if player[key]["discord_id"]: 
+                    this_player["discord_id"] = player[key]["discord_id"]
+                result.append(this_player)
             return result
         except:
             return None
