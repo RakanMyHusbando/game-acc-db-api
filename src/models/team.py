@@ -43,7 +43,7 @@ class Team:
         self.conn = sqlite3.connect(db_file)
         self.utils = UtilsModels(self.conn)
     
-    def creat(self,name:str,game:str,guild_name:str|None,member:list[list]|None) -> str|None:
+    def create(self,name:str,game:str,guild_name:str|None,member:list[list]|None) -> str|None:
         try:
             query = "INSERT INTO team (name, game"
             values = f'"{name}", "{game}"'

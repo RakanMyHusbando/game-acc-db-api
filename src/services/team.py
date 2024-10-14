@@ -22,12 +22,27 @@ class Team:
         self.model = model.Team()
 
     def create(self,input) -> str|None:
-        
-        return self.model.creat(
+        return self.model.create(
             utils.try_key(input,"team_name"),
             utils.try_key(input,"game"),
             utils.try_key(input,"guild_name"),
             utils.member_handle_json(input)
+        )
+    
+    def get(self,input) -> list|None:
+        return self.model.get(input)
+    
+class Discord: 
+    def __init__(self) -> None:
+        self.model = model.Discord()
+
+    def create(self,input) -> str|None:
+        return self.model.create(
+            utils.try_key(input,"team_name"),
+            utils.try_key(input,"server"),
+            utils.try_key(input,"category"),
+            utils.try_key(input,"roles"),
+            utils.try_key(input,"channels")
         )
     
     def get(self,input) -> list|None:

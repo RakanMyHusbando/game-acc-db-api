@@ -83,6 +83,12 @@ def get_user_team():
         team.User().get(username)
     )
 
+@app.route("/api/team/discord",methods = ["POST"])
+def get_user_team():
+    utils.res_post(
+        team.Discord().create(request.get_json())
+    )
+
 if __name__ == "__main__":
     Schema()
     app.run(
