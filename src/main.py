@@ -93,5 +93,5 @@ if __name__ == "__main__":
     Schema()
     app.run(
         debug=bool(os.getenv("DEBUG")),
-        port=int(os.getenv("PORT"))
+        port=os.getenv("PORT")
     )
