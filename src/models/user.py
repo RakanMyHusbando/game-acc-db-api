@@ -19,17 +19,17 @@ class User:
         except:
             return None
         
-    def get(self,search_by:str|None,value:str|None) -> list|None:
+    def get(self,search:list|None) -> list|None:
         try: 
             cur = self.conn.cursor()
             query = "SELECT * FROM user "
-            if search_by and value:
-                query += f'WHERE {search_by} = "{value}"'
+            if search and len(search) == 2:
+                query += f'WHERE {search[0]} = "{search[1]}"'
             cur.execute(query)
             result = []
             for team in cur.fetchall():
                 result.append({
-                    "username": team[1],
+                    "user_name": team[1],
                     "discord_id": team[2]
                 })
             return result
@@ -67,17 +67,24 @@ class LeagueOfLegends:
         except:
             return None
         
-    def get(self,user_name:str|None) -> list|None:  
+    def get(self,search:list|None) -> list|None:  
         try:
             cur = self.conn.cursor()
             result = []
-            player = {}
-            query = "SELECT * FROM user_league_of_legends "
-            if user_name:
-                cur.execute(f'SELECT * FROM user WHERE name = "{user_name}"')
-                query += f'WHERE user_key = {cur.fetchall()[0][0]}'
-            cur.execute(query)
-            for acc in cur.fetchall():
+            user = User().get(search)
+            for elem in user:
+                cur.execute(f'SELECT * FROM user WHERE name = "{elem["user_name"]}"')
+                cur.execute(f'SELECT * FROM user_league_of_legends WHERE user_key = {cur.fetchall()[0][0]}')
+                accs = self.get_accs(cur.fetchall()[0][0])
+                player = {"user_name": elem["user_name"], "league_of_legends": accs}
+        except: 
+            return None
+    
+    def get_accs(self,accs:list) -> str:
+        try: 
+            cur = self.conn.cursor()
+            result = []
+            for acc in accs:
                 posititon = []
                 pos = { "position": None, "champs": []}
                 for i in range(len(acc)):
@@ -90,25 +97,14 @@ class LeagueOfLegends:
                             pos["position"] = acc[i]
                         elif i > 3: 
                             pos["champs"].append(acc[i])
-                cur.execute(f'SELECT * FROM user WHERE user_key = {acc[0]}')
-                user = cur.fetchall()[0]
-                if (user[1] in player) == False:
-                    player[user[1]] = { "discord_id": user[2], "accounts": [] }
-                print(user)
-                player[user[1]]["accounts"].append({
+                result.append({
                     "ingame_name": acc[1],
                     "position": posititon
                 })
-                
-            for key in player:
-                this_player = {"user_name": key, "accounts": player[key]["accounts"]}
-                
-                if player[key]["discord_id"]: 
-                    this_player["discord_id"] = player[key]["discord_id"]
-                result.append(this_player)
             return result
         except:
-            return None
+            return []
+
         
 class Valorant:
     def __init__(self,db_file=os.getenv("DB_FILE")) -> None:

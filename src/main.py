@@ -31,27 +31,16 @@ def create():
 def get():
     username = request.args.get("username")
     discord_id = request.args.get("discord_id")
-    key = None
-    value = None
-    if username:
-        key = "name"
-        value = username
-    elif discord_id:
-        key = "discord_id"
-        value = discord_id
-    return utils.res_get(
-        user.User().get(key,value)
-    )
-
-@app.route("/api/user/<string:game>",methods = ["GET"])
-def get_game_user(game:str):
-    username = request.args.get("username")
+    game = request.args.get("game")
     result = None
-    if game == "league_of_legends":
-        result = user.LeagueOfLegends().get(username)
-    elif game == "valorant":
-        result =  user.Valorant().get(username)
-    return utils.res_get(result)
+    query_param = ()
+    if username:
+        query_param.append(["name",username])
+    elif discord_id:
+        query_param.append(["discord_id",discord_id])
+    if game:
+        query_param.append(["game",game])
+
 
 ########
 # TEAM #
