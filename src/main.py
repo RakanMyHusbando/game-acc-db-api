@@ -16,7 +16,7 @@ app = Flask(__name__)
 ########
 
 @app.route("/api/user",methods = ["POST"])
-def create():
+def user_create():
     game = request.args.get("game")
     result = None
     if not game:
@@ -28,52 +28,53 @@ def create():
     return utils.res_post(result)
 
 @app.route("/api/user",methods = ["GET"])
-def get():
+def user_get():
     username = request.args.get("username")
     discord_id = request.args.get("discord_id")
     game = request.args.get("game")
-    result = None
-    query_param = ()
+    params = {}
     if username:
-        query_param.append(["name",username])
+        params["name"] = username
     elif discord_id:
-        query_param.append(["discord_id",discord_id])
+        params["discord_id"] = discord_id
     if game:
-        query_param.append(["game",game])
-
+        params["game"] = game.split(",")
+    return utils.res_get(
+        user.User().get(params)
+    )
 
 ########
 # TEAM #
 ########
 
 @app.route("/api/team",methods = ["POST"])
-def create_team():
+def team_create():
     return utils.res_post(
         team.Team().create(request.get_json())
     )
 
 @app.route("/api/team",methods = ["GET"])
-def get_team():
+def team_get():
     teamname = request.args.get("teamname")
     return utils.res_get(
         team.Team().get(teamname)
     )
 
 @app.route("/api/team/user",methods = ["POST"])
-def create_user_team():
+def team_create_user():
     return utils.res_post(
         team.User().create(request.get_json())
     )
 
 @app.route("/api/team/user",methods = ["GET"])
-def get_user_team():
+def team_get_user():
     username = request.args.get("username")
     return utils.res_get(
         team.User().get(username)
     )
 
 @app.route("/api/team/discord",methods = ["POST"])
-def creat_team_discord():
+def team_creat_discord():
     utils.res_post(
         team.Discord().create(request.get_json())
     )

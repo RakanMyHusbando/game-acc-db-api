@@ -52,13 +52,13 @@ http://127.0.0.1:5000/api/user?username=<user_name>
 ```
 http://127.0.0.1:5000/api/user?discord_id=<discord_id>
 ```
-## GET game accounts
+## GET all game accounts
 ```
-http://127.0.0.1:5000/api/user/<game>
+http://127.0.0.1:5000/api/user?game=<game>
 ```
-## GET game account by username
+## GET game accounts by username
 ```
-http://127.0.0.1:5000/api/user/<game>?username=<user_name>
+http://127.0.0.1:5000/api/user?game=<game>&username=<user_name>
 ```
 ---
 ## POST new team

@@ -75,9 +75,9 @@ class LeagueOfLegends:
             for elem in user:
                 cur.execute(f'SELECT * FROM user WHERE name = "{elem["user_name"]}"')
                 cur.execute(f'SELECT * FROM user_league_of_legends WHERE user_key = {cur.fetchall()[0][0]}')
-                accs = self.get_accs(cur.fetchall()[0][0])
-                result[elem["user_name"]] = { "user_name": result[elem["user_name"]], "league_of_legends": accs }
-                if elem["discord_id"]:
+                accs = self.get_accs(cur.fetchall())
+                result[elem["user_name"]] = { "user_name": elem["user_name"], "league_of_legends": accs }
+                if "discord_id" in elem:
                     result[elem["user_name"]]["discord_id"] = elem["discord_id"]
             return result
         except: 

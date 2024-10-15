@@ -13,17 +13,17 @@ class User:
             utils.try_key(input,"discord_id")
         )
     
-    def get(self,*input) -> list|None:
+    def get(self,input) -> list|None:
         try: 
             search = None
             games = []
             game_accs = {}
             result = []
-            for elem in input:
-                if elem[0] == "game":
-                    games = elem[1]
+            for key in input:
+                if key == "game":
+                    games = list(input[key])
                 elif search == None:
-                    search = elem
+                    search = [key,input[key]]
             for game in games:
                 accs = {}
                 match game:
