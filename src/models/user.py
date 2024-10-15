@@ -27,11 +27,11 @@ class User:
                 query += f'WHERE {search[0]} = "{search[1]}"'
             cur.execute(query)
             result = []
-            for team in cur.fetchall():
-                result.append({
-                    "user_name": team[1],
-                    "discord_id": team[2]
-                })
+            for elem in cur.fetchall():
+                user = {"user_name": elem[1]}
+                if elem[2]:
+                    user["discord_id"] = elem[2]
+                result.append(user)
             return result
         except:
             return None
@@ -70,17 +70,20 @@ class LeagueOfLegends:
     def get(self,search:list|None) -> list|None:  
         try:
             cur = self.conn.cursor()
-            result = []
+            result = {}
             user = User().get(search)
             for elem in user:
                 cur.execute(f'SELECT * FROM user WHERE name = "{elem["user_name"]}"')
                 cur.execute(f'SELECT * FROM user_league_of_legends WHERE user_key = {cur.fetchall()[0][0]}')
                 accs = self.get_accs(cur.fetchall()[0][0])
-                player = {"user_name": elem["user_name"], "league_of_legends": accs}
+                result[elem["user_name"]] = { "user_name": result[elem["user_name"]], "league_of_legends": accs }
+                if elem["discord_id"]:
+                    result[elem["user_name"]]["discord_id"] = elem["discord_id"]
+            return result
         except: 
             return None
     
-    def get_accs(self,accs:list) -> str:
+    def get_accs(self,accs:list) -> list:
         try: 
             cur = self.conn.cursor()
             result = []
