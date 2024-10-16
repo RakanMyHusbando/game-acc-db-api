@@ -143,9 +143,12 @@ class Discord:
         try:
             team_key = self.utils.key_by_name(name,"team")
             if not team_key:
-                raise Exception()
+                raise Exception() #TODO
             query = "INSERT INTO team_discord (team_key, server_id"
             values = f'{team_key}, "{name}"'
+            if server_id:
+                query += ", server_id"
+                values += f', {server_id}'
             if category_id:
                 query += ", category_id"
                 values += f', {category_id}'
@@ -165,4 +168,38 @@ class Discord:
             return None
         
     def get(self,name:str|None) -> list|None:
-        pass
+        try:
+            keys = [
+                "team_key",
+                "server_id",
+                "role_team_id",
+                "role_player_id",
+                "role_tryout_id",
+                "role_coach_id",
+                "category_id",
+                "channel_team_roaster_id",
+                "channel_team_chat_id",
+                "channel_shogun_chat_id",
+                "channel_team_voice_id"
+            ]
+            cur = self.conn.cursor()
+            query = "SELECT * FROM team_discord "
+            result = []
+            if name:
+                cur.execute(f'SELECT team_key FROM team WHERE name = "{name}"')
+                query += f'WHERE team_key = {cur.fetchall()[0][0]}'
+            cur.execute(query)
+            teams = cur.fetchall()
+            for team in teams:
+                team_dict = { "role": {}, "channel": {} }
+                for i in range(len(team)):
+                    if team[i] and keys[i] != "team_key":
+                        if team[i].split("_")[0] == "role" or team[i].split("_")[0] == "channel":
+                            key = team[i].split("_")[0]
+                            team_dict[key][team[i].replace(f"{key}_","")] = team[i]
+                        else:
+                            team_dict[keys[i]] = team[i]
+                result.append(team_dict)
+            return result
+        except:
+            return None

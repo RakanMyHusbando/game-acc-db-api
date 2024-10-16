@@ -18,14 +18,13 @@ app = Flask(__name__)
 @app.route("/api/user",methods = ["POST"])
 def user_create():
     game = request.args.get("game")
-    result = None
-    if not game:
-        result = user.User().create(request.get_json())
-    elif game == "league_of_legends":
-        result = user.LeagueOfLegends().create(request.get_json())
-    elif game == "valorant":
-        result = user.Valorant().create(request.get_json())
-    return utils.res_post(result)
+    match game:
+        case None:
+            return user.User().create(request.get_json())
+        case "league_of_legends":
+            return user.LeagueOfLegends().create(request.get_json())
+        case "valorant":
+            pass
 
 @app.route("/api/user",methods = ["GET"])
 def user_get():
@@ -49,35 +48,38 @@ def user_get():
 
 @app.route("/api/team",methods = ["POST"])
 def team_create():
-    return utils.res_post(
-        team.Team().create(request.get_json())
-    )
+    prop = request.args.get("property")
+    if prop: 
+        for elem in prop.split(","):
+            match elem:
+                case "user":
+                    return team.User().create(request.get_json())
+                case "discord":
+                    return team.Discord().create(request.get_json())
+    else:
+        return team.Team().create(request.get_json())
+
+    
 
 @app.route("/api/team",methods = ["GET"])
 def team_get():
     teamname = request.args.get("teamname")
-    return utils.res_get(
-        team.Team().get(teamname)
-    )
-
-@app.route("/api/team/user",methods = ["POST"])
-def team_create_user():
-    return utils.res_post(
-        team.User().create(request.get_json())
-    )
-
-@app.route("/api/team/user",methods = ["GET"])
-def team_get_user():
     username = request.args.get("username")
-    return utils.res_get(
-        team.User().get(username)
-    )
-
-@app.route("/api/team/discord",methods = ["POST"])
-def team_creat_discord():
-    utils.res_post(
-        team.Discord().create(request.get_json())
-    )
+    prop = request.args.get("propery")
+    search = None
+    if teamname:
+        search = ["team",teamname]
+    elif username:
+        search = ["user_team",username]
+    result = team.Team().get(search)
+    if prop:
+        for elem in prop.split(","):
+            match elem:
+                case "discord": 
+                    for i in range(len(result)):
+                        team_discord = team.Discord().get(result[i]["name"])
+                        if team_discord:
+                            result[i]["discord"] = team_discord
 
 if __name__ == "__main__":
     Schema()
