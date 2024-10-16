@@ -1,4 +1,2 @@
-import sqlite3, os, dotenv
+import sqlite3, os
 from utils import UtilsModels
-
-dotenv.load_dotenv() 

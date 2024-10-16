@@ -1,7 +1,5 @@
-import sqlite3, os, dotenv
+import sqlite3, os 
 from utils import UtilsModels
-
-dotenv.load_dotenv() 
 
 class User:
     def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
@@ -17,13 +15,13 @@ class User:
         except: 
             return None
 
-    def get(self,team_name:str|None,user_name:str|None) -> list|None:
+    def get(self,search:list|None) -> list|None:
         try: 
             cur = self.conn.cursor()
             query = "SELECT * FROM user_team "
             result = []
-            if team_name:
-                team_key = self.utils.key_by_name(team_name,"team")
+            if search and search[0] == "team_name":
+                team_key = self.utils.key_by_name(search[1],"team")
                 query += f'WHERE team_key = {team_key}'
             cur.execute(query)
             for elem in cur.fetchall():
@@ -32,7 +30,7 @@ class User:
                     "team_name": self.utils.name_where("team_key",elem[1],"team"),
                     "role": elem[2]
                 }
-                if user_name == None or user_name == player["user_name"]:
+                if search == None or search[0] != "user_name" or search[1] == player["user_name"]:
                     result.append(player)
             return result
         except:
@@ -167,7 +165,7 @@ class Discord:
         except:
             return None
         
-    def get(self,name:str|None) -> list|None:
+    def get(self,search:list|None) -> list|None:
         try:
             keys = [
                 "team_key",
@@ -185,8 +183,8 @@ class Discord:
             cur = self.conn.cursor()
             query = "SELECT * FROM team_discord "
             result = []
-            if name:
-                cur.execute(f'SELECT team_key FROM team WHERE name = "{name}"')
+            if search:
+                cur.execute(f'SELECT team_key FROM team WHERE {search[0]} = "{search[1]}"')
                 query += f'WHERE team_key = {cur.fetchall()[0][0]}'
             cur.execute(query)
             teams = cur.fetchall()
