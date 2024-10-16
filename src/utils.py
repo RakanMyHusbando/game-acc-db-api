@@ -30,6 +30,16 @@ class UtilsServices:
                 elif type(input["member"][key]) == str:
                     member.append([input["member"][key],key])
         return member
+    def res_get(self,data):
+        result = { "data": data, "status": 404 }
+        if data != None:
+            result["status"] = 200
+        return jsonify(result), result["status"]
+    def res_post(self,response):
+        result = { "response": response, "status": 404 }
+        if response != None:
+            result["status"] = 201
+        return jsonify(result), result["status"]
     
 class UtilsModels: 
     def __init__(self,conn:Connection) -> None:
@@ -49,15 +59,3 @@ class UtilsModels:
             return cur.fetchall()[0][0]
         except:
             return None 
-
-class UtilsMain:        
-    def res_get(self,data):
-        result = { "data": data, "status": 404 }
-        if data != None:
-            result["status"] = 200
-        return jsonify(result), result["status"]
-    def res_post(self,response):
-        result = { "response": response, "status": 404 }
-        if response != None:
-            result["status"] = 201
-        return jsonify(result), result["status"]

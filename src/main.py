@@ -1,10 +1,10 @@
 from flask import Flask, request
 from models.schema import Schema
-from utils import UtilsMain
 from services import User, Team
-import os 
+import os, dotenv
 
-utils = UtilsMain()
+dotenv.load_dotenv()
+
 app = Flask(__name__)
 
 ########
@@ -16,8 +16,7 @@ def user_create():
     return User().create(
         request.get_json(),
         request.args.get("create")
-    )
-    
+    ) 
 
 @app.route("/api/user",methods = ["GET"])
 def user_get():
@@ -39,9 +38,10 @@ def user_get():
 
 @app.route("/api/team",methods = ["POST"])
 def team_create():
+    create =  request.args.get("create")
     return Team().create(
         request.get_json(),
-        request.args.get("create")
+        create
     )
     
 @app.route("/api/team",methods = ["GET"])

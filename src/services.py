@@ -12,9 +12,10 @@ class Team:
         self.discord = prop_team.Discord()
 
     def create(self,body,create) -> str|None:
+        result = None
         match create:
             case None:
-                return self.team.create(
+                result = self.team.create(
                     utils.try_key(body,"team_name"),
                     utils.try_key(body,"game"),
                     utils.try_key(body,"guild_name"),
@@ -24,6 +25,7 @@ class Team:
                 pass
             case "discord":
                 self.discord.create(body)
+        return utils.res_post(result)
 
     def get(self,search,props=[]) -> list|None:
         result = self.team.get(search)
@@ -46,16 +48,18 @@ class User:
         self.valorant = prop_user.Valorant()
         
     def create(self,body,create) -> str|None:
+        result = None
         match create:
-            case None:
-                return self.model.create(
-                    utils.try_key(body,"user_name"),
-                    utils.try_key(body,"discord_id")
-                )
             case "league_of_leagends":
                 pass
             case "valorant":
                 pass
+        if result == None:
+            result = self.user.create(
+                utils.try_key(body,"user_name"),
+                utils.try_key(body,"discord_id")
+            )
+        return result
     
     def get(self,search,props=[]) -> list|None:
         result = self.user.get(search)

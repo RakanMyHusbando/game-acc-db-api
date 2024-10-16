@@ -1,5 +1,7 @@
-import sqlite3, os 
+import sqlite3, os, dotenv
 from utils import UtilsModels
+
+dotenv.load_dotenv()
 
 class User:
     def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
