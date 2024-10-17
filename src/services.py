@@ -33,19 +33,23 @@ class Team:
                 )
         return utils.res_post(result)
 
-    def get(self,search,props=[]) -> list|None:
-        result = self.team.get(search)
+    def get(self,search,props) -> list|None:
+        result = self.model.Team().get(search)
+        if props == None:
+            return utils.res_get(result)
         name_i = {}
         for i in range(len(result)):
             name_i[result[i]["name"]] = i
         for prop in props:
             for name in name_i: 
-                result_p = None
                 match prop:
                     case "discord":
-                        result_p = self.discord.get(search) 
-                if result_p:
-                    result[name] = result_p
+                        result = utils.prop_in_user(
+                            prop,
+                            self.model.Discord().get(search),
+                            name_i[name],
+                            result
+                        )
         return utils.res_get(result)
 
 class User:
@@ -60,7 +64,7 @@ class User:
                     utils.try_key(body,"user_name"),
                     utils.try_key(body,"discord_id")
                 )
-            case "league_of_leagends":
+            case "league_of_legends":
                 result = self.model.LeagueOfLegends().create(
                     utils.try_key(body,"user_name"),
                     utils.try_key(body,"ingame_name"),
@@ -69,19 +73,21 @@ class User:
                 )
         return utils.res_post(result)
     
-    def get(self,search,props=[]) -> list|None:
-        result = self.user.get(search)
+    def get(self,search,props) -> list|None:
+        result = self.model.User().get(search)
+        if props == None:
+            return utils.res_get(result)
         name_i = {}
         for i in range(len(result)):
-            name_i[result[i]["name"]] = i
+            name_i[result[i]["user_name"]] = i
         for prop in props:
             for name in name_i: 
-                result_p = None
                 match prop:
                     case "league_of_legends":
-                        result_p = self.league_of_legends.get(search) 
-                    case "valorant":
-                        result_p = self.valorant.get(search)
-                if result_p:
-                    result[name] = result_p
+                        result = utils.prop_in_user(
+                            prop,
+                            self.model.LeagueOfLegends().get(search),
+                            name_i[name],
+                            result
+                        )
         return utils.res_get(result)

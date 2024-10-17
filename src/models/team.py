@@ -6,7 +6,7 @@ dotenv.load_dotenv()
 class User:
     def __init__(self) -> None:
         self.conn = sqlite3.connect(os.getenv("DB_FILE"))
-        self.utils = UtilsModels(self.conn)
+        self.utils = UtilsModels()
         
     def create(self,user_name:str,team_name:str,role:str) -> str|None:
         try:
@@ -41,7 +41,7 @@ class User:
 class Team:
     def __init__(self) -> None:
         self.conn = sqlite3.connect(os.getenv("DB_FILE"))
-        self.utils = UtilsModels(self.conn)
+        self.utils = UtilsModels()
     
     def create(self,name:str,game:str,guild_name:str|None,member:list[list]|None) -> str|None:
         try:
@@ -137,7 +137,7 @@ class Team:
 class Discord:
     def __init__(self) -> None:
         self.conn = sqlite3.connect(os.getenv("DB_FILE"))
-        self.utils = UtilsModels(self.conn)
+        self.utils = UtilsModels()
 
     def create(self,name:str,server_id:str,category_id:str|None,role_id:dict|None,channel_id:dict|None) -> str|None:
         try:

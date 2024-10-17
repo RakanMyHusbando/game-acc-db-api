@@ -22,15 +22,15 @@ def user_create():
 def user_get():
     username = request.args.get("username")
     discord_id = request.args.get("discord_id")
-    game = request.args.get("game")
+    props = request.args.get("property")
     search = None
     if username:
         search = ["name",username]
     elif discord_id:
         search = ["discord_id",discord_id]
-    if game:
-        game = game.split(",")
-    return User().get(search,game)
+    if props:
+        props = props.split(",")
+    return User().get(search,props)
 
 ########
 # TEAM #
@@ -47,17 +47,15 @@ def team_create():
 def team_get():
     teamname = request.args.get("teamname")
     username = request.args.get("username")
-    prop = request.args.get("propery")
+    props = request.args.get("propery")
     search = None
-    if prop: 
-        prop = prop.split(",")
-    else: 
-        prop = []
     if username: 
         search = ["user_name",username]
     elif teamname:
         search = ["team_name",teamname]
-    return Team().get(search,prop)
+    if props: 
+        props = props.split(",")
+    return Team().get(search,props)
 
         
 

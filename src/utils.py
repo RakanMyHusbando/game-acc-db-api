@@ -1,5 +1,7 @@
-import sqlite3
+import sqlite3, os, dotenv
 from flask import jsonify
+
+dotenv.load_dotenv()
 
 class UtilsServices:
     def try_key(self,input,*keys):
@@ -40,6 +42,12 @@ class UtilsServices:
         if response != None:
             result["status"] = 201
         return jsonify(result), result["status"]
+    def prop_in_user(self,prop,data,i,into):
+        result = into
+        for key in data:
+            result[i][prop] = data[key]
+        return result
+        
     
 class UtilsModels: 
     def __init__(self) -> None:
