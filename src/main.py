@@ -38,10 +38,9 @@ def user_get():
 
 @app.route("/api/team",methods = ["POST"])
 def team_create():
-    create =  request.args.get("create")
     return Team().create(
         request.get_json(),
-        create
+        request.args.get("create")
     )
     
 @app.route("/api/team",methods = ["GET"])

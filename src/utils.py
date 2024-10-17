@@ -1,4 +1,4 @@
-from sqlite3 import Connection
+import sqlite3
 from flask import jsonify
 
 class UtilsServices:
@@ -42,8 +42,8 @@ class UtilsServices:
         return jsonify(result), result["status"]
     
 class UtilsModels: 
-    def __init__(self,conn:Connection) -> None:
-        self.conn = conn
+    def __init__(self) -> None:
+        self.conn = sqlite3.connect(os.getenv("DB_FILE"))
 
     def key_by_name(self,name:str,table:str):
         try:

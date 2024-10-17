@@ -4,8 +4,8 @@ from utils import UtilsModels
 dotenv.load_dotenv()
 
 class User:
-    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
-        self.conn = sqlite3.connect(db_file)
+    def __init__(self) -> None:
+        self.conn = sqlite3.connect(os.getenv("DB_FILE"))
         self.utils = UtilsModels(self.conn)
 
     def create(self,user_name:str,discord_id:str|None) -> str|None:
@@ -37,12 +37,13 @@ class User:
             return None
         
 class LeagueOfLegends:
-    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
-        self.conn = sqlite3.connect(db_file)
+    def __init__(self) -> None:
+        self.conn = sqlite3.connect(os.getenv("DB_FILE"))
         self.utils = UtilsModels(self.conn)
 
     def create(self,user_name:str,ingame_name:str,position:list|None,discord_id:str|None) -> str|None:
         # create user if not exists
+        print("position")
         if self.utils.key_by_name(user_name,"user") == None:
             User().create(user_name,discord_id)
         try:
@@ -110,8 +111,8 @@ class LeagueOfLegends:
 
         
 class Valorant:
-    def __init__(self,db_file=os.getenv("DB_FILE")) -> None:
-        self.conn = sqlite3.connect(db_file)
+    def __init__(self) -> None:
+        self.conn = sqlite3.connect(os.getenv("DB_FILE"))
         self.utils = UtilsModels(self.conn)
 
     def create(self,user_name:str,ingame_name:str,position:list|None,discord_id:str|None) -> str|None:  
