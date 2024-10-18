@@ -1,5 +1,7 @@
-from sqlite3 import Connection
+import sqlite3, os, dotenv
 from flask import jsonify
+
+dotenv.load_dotenv()
 
 class UtilsServices:
     def try_key(self,input,*keys):
@@ -30,10 +32,26 @@ class UtilsServices:
                 elif type(input["member"][key]) == str:
                     member.append([input["member"][key],key])
         return member
+    def res_get(self,data):
+        result = { "data": data, "status": 404 }
+        if data != None:
+            result["status"] = 200
+        return jsonify(result), result["status"]
+    def res_post(self,response):
+        result = { "response": response, "status": 404 }
+        if response != None:
+            result["status"] = 201
+        return jsonify(result), result["status"]
+    def prop_in_user(self,prop,data,i,into):
+        result = into
+        for key in data:
+            result[i][prop] = data[key]
+        return result
+        
     
 class UtilsModels: 
-    def __init__(self,conn:Connection) -> None:
-        self.conn = conn
+    def __init__(self) -> None:
+        self.conn = sqlite3.connect(os.getenv("DB_FILE"))
 
     def key_by_name(self,name:str,table:str):
         try:
@@ -49,15 +67,3 @@ class UtilsModels:
             return cur.fetchall()[0][0]
         except:
             return None 
-
-class UtilsMain:        
-    def res_get(self,data):
-        result = { "data": data, "status": 404 }
-        if data != None:
-            result["status"] = 200
-        return jsonify(result), result["status"]
-    def res_post(self,response):
-        result = { "response": response, "status": 404 }
-        if response != None:
-            result["status"] = 201
-        return jsonify(result), result["status"]

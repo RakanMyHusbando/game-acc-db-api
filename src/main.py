@@ -1,14 +1,10 @@
 from flask import Flask, request
 from models.schema import Schema
-from utils import UtilsMain
-import services.user as user 
-import services.team as team
-import services.guild as guild
+from services import User, Team
 import os, dotenv
 
-dotenv.load_dotenv() 
+dotenv.load_dotenv()
 
-utils = UtilsMain()
 app = Flask(__name__)
 
 ########
@@ -17,31 +13,24 @@ app = Flask(__name__)
 
 @app.route("/api/user",methods = ["POST"])
 def user_create():
-    game = request.args.get("game")
-    result = None
-    if not game:
-        result = user.User().create(request.get_json())
-    elif game == "league_of_legends":
-        result = user.LeagueOfLegends().create(request.get_json())
-    elif game == "valorant":
-        result = user.Valorant().create(request.get_json())
-    return utils.res_post(result)
+    return User().create(
+        request.get_json(),
+        request.args.get("create")
+    ) 
 
 @app.route("/api/user",methods = ["GET"])
 def user_get():
     username = request.args.get("username")
     discord_id = request.args.get("discord_id")
-    game = request.args.get("game")
-    params = {}
+    props = request.args.get("property")
+    search = None
     if username:
-        params["name"] = username
+        search = ["name",username]
     elif discord_id:
-        params["discord_id"] = discord_id
-    if game:
-        params["game"] = game.split(",")
-    return utils.res_get(
-        user.User().get(params)
-    )
+        search = ["discord_id",discord_id]
+    if props:
+        props = props.split(",")
+    return User().get(search,props)
 
 ########
 # TEAM #
@@ -49,35 +38,26 @@ def user_get():
 
 @app.route("/api/team",methods = ["POST"])
 def team_create():
-    return utils.res_post(
-        team.Team().create(request.get_json())
+    return Team().create(
+        request.get_json(),
+        request.args.get("create")
     )
-
+    
 @app.route("/api/team",methods = ["GET"])
 def team_get():
     teamname = request.args.get("teamname")
-    return utils.res_get(
-        team.Team().get(teamname)
-    )
-
-@app.route("/api/team/user",methods = ["POST"])
-def team_create_user():
-    return utils.res_post(
-        team.User().create(request.get_json())
-    )
-
-@app.route("/api/team/user",methods = ["GET"])
-def team_get_user():
     username = request.args.get("username")
-    return utils.res_get(
-        team.User().get(username)
-    )
+    props = request.args.get("propery")
+    search = None
+    if username: 
+        search = ["user_name",username.split(",")]
+    elif teamname:
+        search = ["team_name",teamname.split(",")]
+    if props: 
+        props = props.split(",")
+    return Team().get(search,props)
 
-@app.route("/api/team/discord",methods = ["POST"])
-def team_creat_discord():
-    utils.res_post(
-        team.Discord().create(request.get_json())
-    )
+        
 
 if __name__ == "__main__":
     Schema()

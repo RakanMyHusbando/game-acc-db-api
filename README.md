@@ -1,30 +1,22 @@
 # WARNING: This project is in progress and some parts dont work yet!
-# Description
-Run `python main.py` inside the porject-folder.
 # API requests
-- replace `<game>` with league_of_legends (or valorant)
-- replace `<user_name>` with a username (game-acc or discord-name)
-- replace `<discord_id>`
-- replace `team_name`
-## POST new user
+## POST user
 ```
 http://127.0.0.1:5000/api/user
 ```
-### req-body
+#### req-body
 ```
 {
   "user_name": string,
-  "discord_id": string|null
+  "discord_id": null|string
 }
 ```
-## POST new game account
-```
-http://127.0.0.1:5000/api/user?game=<game>
-```
-### `league_of_legemds` req-body:
-- if no user with this `user_name` exists, it will be created
-- `position` max length is 2
-- `position[i].champs` max length is 3
+### query param with key "create"
+- league_of_legends
+#### `league_of_legends` req-body:
+- if no user with this "user_name" exists, it will be created
+- "position" max length is 2
+- "position[i].champs" max length is 3
 ```
 {
   "user_name": string,
@@ -40,32 +32,20 @@ http://127.0.0.1:5000/api/user?game=<game>
   ]
 }
 ```
-## GET all user
+## GET user
 ```
 http://127.0.0.1:5000/api/user
 ```
-## GET user by username
-```
-http://127.0.0.1:5000/api/user?username=<user_name>
-```
-## GET user by discord_id
-```
-http://127.0.0.1:5000/api/user?discord_id=<discord_id>
-```
-## GET all game accounts
-```
-http://127.0.0.1:5000/api/user?game=<game>
-```
-## GET game accounts by username
-```
-http://127.0.0.1:5000/api/user?game=<game>&username=<user_name>
-```
----
-## POST new team
+### query params with key "property" (list seperated by ",")
+- league_of_legends
+### query params with key "username"
+- username (list seperated by ",")
+- teamname (list seperated by ",")
+## POST team
 ```
 http://127.0.0.1:5000/api/team
 ```
-### `league_of_legemds` req-body:
+#### req-body
 ```
 {
   "team_name": string,
@@ -73,35 +53,25 @@ http://127.0.0.1:5000/api/team
   "guild_name": null|string,
   "member": null|{
     "role0": string (user_name),
-    "role1": string (user_name),
     ...
     "main": {
-      "top": string (user_name),
-      "jng": string (user_name),
+      "role": string (user_name),
       ...
     },
     "substitute": [
       {
         "name": string (user_name),
-        "role": "top"|"jng"|"mid"|"adc"|"sup"
-      }
+        "role": string
+      },
+      ...
     ]
   }
 } 
 ```
-## GET all teams
-```
-http://127.0.0.1:5000/api/team
-```
-## GET team by teamname
-```
-http://127.0.0.1:5000/api/team?teamname=<team_name>
-```
-## POST add new user to team
-```
-http://127.0.0.1:5000/api/team/user
-```
-### req-body
+### query param with key "create"
+- user
+- discord
+#### `user` req-body
 - if the user is part of the main-team then write his role `main_<role>` 
 - if the user is part of the substitutes then write his role `substitute_<role>`
 ```
@@ -109,5 +79,24 @@ http://127.0.0.1:5000/api/team/user
   "user_name": string,
   "team_name": string,
   "role": string
+}
+```
+#### `discord` req-body
+```
+{
+  "server": string,
+  "role": null|{
+    "team": null|string,
+    "player": null|string,
+    "tryout": null|string,
+    "coach": null|string
+  },
+  "catrgory": null|string,
+  "channel": null|{
+    "team_roaster": null|string,
+    "team_chat": null|string,
+    "shogun_chat": null|string,
+    "team_voice": null|string
+  }
 }
 ```
