@@ -124,10 +124,7 @@ class Discord:
             if not team_key:
                 raise Exception() #TODO
             query = "INSERT INTO team_discord (team_key, server_id"
-            values = f'{team_key}, "{name}"'
-            if server_id:
-                query += ", server_id"
-                values += f', {server_id}'
+            values = f'{team_key}, "{server_id}"'
             if category_id:
                 query += ", category_id"
                 values += f', {category_id}'

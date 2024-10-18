@@ -74,7 +74,14 @@ class User:
         return utils.res_post(result)
     
     def get(self,search,props) -> list|None:
-        result = self.model.User().get(search)
+        result = []
+        if search:
+            for elem in search[1]:
+                elem_user = self.model.User().get([search[0],elem])
+                if elem_user:
+                    result.extend(elem_user)
+        else:
+            result = self.model.User().get(None)
         if props == None:
             return utils.res_get(result)
         name_i = {}

@@ -50,9 +50,9 @@ def team_get():
     props = request.args.get("propery")
     search = None
     if username: 
-        search = ["user_name",username]
+        search = ["user_name",username.split(",")]
     elif teamname:
-        search = ["team_name",teamname]
+        search = ["team_name",teamname.split(",")]
     if props: 
         props = props.split(",")
     return Team().get(search,props)
