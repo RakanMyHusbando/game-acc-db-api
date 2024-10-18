@@ -1,3 +1,2 @@
-*__pycache__
-*.db
 .env
+game-acc-db-api
