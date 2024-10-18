@@ -11,17 +11,18 @@ class User:
     def create(self,user_name:str,team_name:str,role:str) -> str|None:
         try:
             query = f'INSERT INTO user_team (user_key, team_key, role) VALUES ({self.utils.key_by_name(user_name,"user")},{self.utils.key_by_name(team_name,"team")},"{role}")'
+            print(query)
             result = self.conn.execute(query)
             self.conn.commit()
             return f'ok {result.lastrowid}'
         except: 
             return None
 
-    def get(self,search:list|None) -> list|None:
+    def get(self,search:list|None) -> dict|None:
         try: 
             cur = self.conn.cursor()
             query = "SELECT * FROM user_team "
-            result = []
+            result = {}
             if search and search[0] == "team_name":
                 team_key = self.utils.key_by_name(search[1],"team")
                 query += f'WHERE team_key = {team_key}'
@@ -33,7 +34,7 @@ class User:
                     "role": elem[2]
                 }
                 if search == None or search[0] != "user_name" or search[1] == player["user_name"]:
-                    result.append(player)
+                    result[player["team_name"]] = player
             return result
         except:
             return None
@@ -43,24 +44,20 @@ class Team:
         self.conn = sqlite3.connect(os.getenv("DB_FILE"))
         self.utils = UtilsModels()
     
-    def create(self,name:str,game:str,guild_name:str|None,member:list[list]|None) -> str|None:
+    def create(self,name:str,game:str,guild_name:str|None,member:list|None) -> str|None:
         try:
             query = "INSERT INTO team (name, game"
             values = f'"{name}", "{game}"'
             if guild_name:
                 query += ", guild_key"
-                values += f', "{guild_name}"'
+                values += f', "{self.utils.key_by_name(guild_name)}"'
             query += f') VALUES ({values})'
-            result_team = self.conn.execute(query)
+            result = self.conn.execute(query)
             self.conn.commit()
-            result_user = None
             if member:
                 for elem in member:
-                    result_user = User().create(elem[0],name,elem[1])
-            if result_user:
-                return  "team " + f'ok {result_team.lastrowid}', "user " + f'ok {result_user.lastrowid}'
-            else:
-                return f'ok {result_team.lastrowid}'
+                    User().create(elem[0],name,elem[1])
+            return f'ok {result.lastrowid}'
         except:
             return None
 
@@ -82,24 +79,25 @@ class Team:
                     team["guild"] = cur.fetchall()[1]
                 if team[2] == "league_of_legends":
                     member = self.league_of_legends_memeber(team[0])
+                    print(member)
                     if member:
                         team_dict["member"] = member
                 result.append(team_dict)
             return result
         except:
-            return None
+            return
         
     def league_of_legends_memeber(self,id:int) -> dict|None: 
         try:
             cur = self.conn.cursor()
-            cur.execute(f'SELCT * FROM user_team WHERE team_key = {id}')
+            cur.execute(f'SELECT * FROM user_team WHERE team_key = {id}')
             roles = ["top","jng","mid","adc","sup"]
             member = {
                 "main": {},
                 "substitute": []
             }
             for user_team in cur.fetchall():
-                cur.execute(f'SELCT name FROM user WHERE user_key = {user_team[0]}')
+                cur.execute(f'SELECT name FROM user WHERE user_key = {user_team[0]}')
                 username = cur.fetchall()[0][0]
                 found = False
                 for role in roles:
@@ -114,25 +112,6 @@ class Team:
             return member 
         except:
             return None
-        
-    def valorant_memeber(self,id:int) -> dict|None: 
-        try:
-            cur = self.conn.cursor()
-            cur.execute(f'SELCT * FROM user_team WHERE team_key = {id}')
-            member = {
-                "main": {},
-                "substitute": []
-            }
-            for user_team in cur.fetchall():
-                cur.execute(f'SELCT name FROM user WHERE user_key = {user_team[0]}')
-                username = cur.fetchall()[0][0]
-                found = False
-                # TODO: add main and sub positions 
-                if found == False:
-                    member[user_team[2]] = username 
-            return member 
-        except:
-            return True
         
 class Discord:
     def __init__(self) -> None:
